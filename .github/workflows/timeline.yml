@@ -6,6 +6,7 @@ on:
     paths:
       - "dist/**"
       - "check.cjs"
+      - "test-sheet.cjs"
       - "build-package.cjs"
       - ".github/workflows/timeline.yml"
   workflow_dispatch:
@@ -29,6 +30,8 @@ jobs:
           node --check check.cjs
       - name: Run existing vehicle and trip tests
         run: node check.cjs
+      - name: Test Google Sheets WebData parser
+        run: node test-sheet.cjs
       - name: Verify effective unload fallback is present in both targets
         run: |
           node - <<'NODE'
