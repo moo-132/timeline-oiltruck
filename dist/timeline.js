@@ -61,6 +61,7 @@ exportPngButton.onclick=async()=>{
  try{
   const html2canvas=await loadPngLibrary();
   const source=document.getElementById('nativeTimeline');
+  await Promise.all([...source.querySelectorAll('img.tl-drop')].map(img=>img.decode().catch(()=>{})));
   const table=source.querySelector('.tl-table');
   const captureWidth=Math.max(source.clientWidth,table?.scrollWidth||0,1500)+28;
   const canvas=await html2canvas(source,{
