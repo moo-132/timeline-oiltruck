@@ -115,6 +115,21 @@ exportPngButton.onclick=async()=>{
     if(overflow){overflow.style.overflow='visible';overflow.style.width='100%'}
     const clonedTable=cloned.querySelector('.tl-table');
     if(clonedTable){clonedTable.style.minWidth='0';clonedTable.style.width='100%'}
+    // html2canvas may omit CSS repeating-linear-gradient on table cells.
+    // Build actual hourly grid elements using the same positions as the X-axis ticks.
+    const hourPositions=[...cloned.querySelectorAll('#tlAxis span')].map(tick=>tick.style.left).filter(Boolean);
+    cloned.querySelectorAll('td.tl-chart').forEach(cell=>{
+     cell.style.backgroundImage='none';
+     for(const left of hourPositions){
+      const line=clonedDocument.createElement('span');
+      line.className='tl-export-hour-grid';
+      Object.assign(line.style,{position:'absolute',left,top:'0',bottom:'0',width:'1px',backgroundColor:'#b8c6d5',opacity:'0.72',pointerEvents:'none',zIndex:'0'});
+      cell.insertBefore(line,cell.firstChild);
+     }
+     cell.querySelectorAll('.tl-bar,.tl-drop').forEach(marker=>{
+      marker.style.zIndex=marker.classList.contains('tl-drop')?'2':'1';
+     });
+    });
    }
   });
   const filename='CHN-Diesel-Timeline-'+(document.getElementById('tlDateSelect')?.value||'report')+'.png';
