@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),F=require('./dist/logic.js');
+const row=(plate,gateIn,gateOut='10:00')=>({date:'2026-11-16',plate,province:'สงขลา',gateIn,gateOut,document:''});
+let r=F.analyze([row('80-1234','09:00'),row('80 1234','07:00')]);assert.deepEqual(r.map(x=>x.trip),[2,1]);
+r=F.analyze([row('80-1234','09:00'),row('80 1234','09:00')]);assert(r[1].errors.includes('รายการซ้ำ'));
+r=F.analyze([row('80-1234','23:00','01:00')]);assert.equal(r[0].end-r[0].start,120);
+assert(F.analyze([row('X','25:00')])[0].errors.length);
+assert(F.analyze([{...row('X','08:00'),date:'2026-02-30'}])[0].errors.length);
+r=F.analyze([row('X','07:00'),row('X','08:00'),row('X','09:00')]);assert(r[2].errors.length);
+const fixture=[];for(let i=0;i<19;i++)for(let j=0;j<(i<17?2:1);j++)fixture.push(row('DEMO'+i,j?'14:00':'07:00'));
+r=F.analyze(fixture);assert.equal(r.filter(x=>!x.errors.length).length,36);assert.equal(new Set(r.map(x=>x.plate)).size,19);assert.equal(r.filter(x=>x.trip===1).length,19);assert.equal(r.filter(x=>x.trip===2).length,17);
+console.log('Passed: normalization, chronological rounds, duplicate blocking, invalid dates/times, overnight duration, >2 trips, 19 vehicles / 36 trips');
