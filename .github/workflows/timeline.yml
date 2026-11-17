@@ -8,6 +8,7 @@ on:
       - "google-apps-script/Index.html"
       - "check.cjs"
       - "test-sheet.cjs"
+      - "test-export-grid.cjs"
       - "build-package.cjs"
       - ".github/workflows/timeline.yml"
   workflow_dispatch:
@@ -33,6 +34,8 @@ jobs:
         run: node check.cjs
       - name: Test Google Sheets WebData parser
         run: node test-sheet.cjs
+      - name: Verify hourly grid survives PNG export
+        run: node test-export-grid.cjs
       - name: Verify effective unload fallback is present in both targets
         run: |
           node - <<'NODE'
