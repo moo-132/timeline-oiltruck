@@ -1,0 +1,47 @@
+name: Validate and package Timeline Oil Truck
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dist/**"
+      - "check.cjs"
+      - "build-package.cjs"
+      - ".github/workflows/timeline.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify JS syntax
+        run: |
+          node --check dist/logic.js
+          node --check dist/sheet-live.js
+          node --check dist/timeline.js
+          node --check check.cjs
+      - name: Run existing vehicle and trip tests
+        run: node check.cjs
+      - name: Verify effective unload fallback is present in both targets
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          for (const path of ['dist/timeline.js', 'dist/index.html', 'google-apps-script/Index.html']) {
+            const contents = fs.readFileSync(path, 'utf8');
+            if (!contents.includes('x.unloadFallback=(rawUnload===null||x.unload!==candidate)')) throw Error('Missing unload fallback in '+path);
+          }
+          console.log('Effective unloading fallback found in all distribution targets.');
+          NODE
+      - name: Package website (not a production publish)
+        uses: actions/upload-artifact@v4
+        with:
+          name: timeline-oiltruck
+          path: dist/
+          retention-days: 7
