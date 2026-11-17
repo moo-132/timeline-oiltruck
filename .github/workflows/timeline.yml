@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "dist/**"
+      - "google-apps-script/Index.html"
       - "check.cjs"
       - "test-sheet.cjs"
       - "build-package.cjs"
