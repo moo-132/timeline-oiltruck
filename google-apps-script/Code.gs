@@ -26,7 +26,7 @@ function analyze(input,existing=[]){
  const d=x.date+'|'+x.document;if(x.document&&docs.has(d))x.errors.push('เลขเอกสารซ้ำ');if(x.document)docs.add(d);
  return x;});
  const combined=[...existing.map(r=>({...r,start:time(r.gateIn),old:true})),...rows].sort((a,b)=>a.date.localeCompare(b.date)||a.start-b.start);
- const count={};for(const r of combined){if(r.errors?.length)continue;const k=[r.date,r.plate,r.province].join('|');r.trip=count[k]=(count[k]||0)+1;if(!r.old&&r.trip>2)r.errors.push('เกิน 2 เที่ยว ต้องตรวจทาน');}
+ const count={};for(const r of combined){if(r.errors?.length)continue;const k=[r.date,r.plate,r.province].join('|');r.trip=count[k]=(count[k]||0)+1;if(!r.old&&r.trip>3)r.errors.push('เกิน 3 เที่ยว ต้องตรวจทาน');}
  return rows;
 }
 root.Fuel={normalize,time,analyze};if(typeof module!=='undefined')module.exports=root.Fuel;
