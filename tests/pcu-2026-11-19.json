@@ -1,146 +1,218 @@
 [
   {
     "gateIn": "06:31",
-    "gateOut": "08:20"
+    "gateOut": "08:20",
+    "plate": "69-6528",
+    "province": "กรุงเทพมหานคร"
   },
   {
     "gateIn": "06:37",
-    "gateOut": "08:19"
+    "gateOut": "08:19",
+    "plate": "75-1688",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "06:37",
-    "gateOut": "08:16"
+    "gateOut": "08:16",
+    "plate": "74-9619",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "06:41",
-    "gateOut": "09:53"
+    "gateOut": "09:53",
+    "plate": "74-5711",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "06:41",
-    "gateOut": "09:13"
+    "gateOut": "09:13",
+    "plate": "75-0458",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "06:45",
-    "gateOut": "08:15"
+    "gateOut": "08:15",
+    "plate": "71-6043",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "06:45",
-    "gateOut": "08:15"
+    "gateOut": "08:15",
+    "plate": "71-6126",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "06:45",
-    "gateOut": "09:10"
+    "gateOut": "09:10",
+    "plate": "75-0182",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "06:47",
-    "gateOut": "09:18"
+    "gateOut": "09:18",
+    "plate": "71-6127",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "06:49",
-    "gateOut": "09:20"
+    "gateOut": "09:20",
+    "plate": "71-6040",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "06:50",
-    "gateOut": "10:03"
+    "gateOut": "10:03",
+    "plate": "74-9618",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "06:51",
-    "gateOut": "10:15"
+    "gateOut": "10:15",
+    "plate": "71-6062",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "06:51",
-    "gateOut": "10:52"
+    "gateOut": "10:52",
+    "plate": "75-0462",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "06:55",
-    "gateOut": "10:12"
+    "gateOut": "10:12",
+    "plate": "71-6246",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "06:56",
-    "gateOut": "10:24"
+    "gateOut": "10:24",
+    "plate": "71-6193",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "08:47",
-    "gateOut": "11:08"
+    "gateOut": "11:08",
+    "plate": "71-6243",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "08:44",
-    "gateOut": "11:00"
+    "gateOut": "11:00",
+    "plate": "71-6150",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "08:56",
-    "gateOut": "11:11"
+    "gateOut": "11:11",
+    "plate": "69-6563",
+    "province": "กรุงเทพมหานคร"
   },
   {
     "gateIn": "11:06",
-    "gateOut": "12:11"
+    "gateOut": "12:11",
+    "plate": "71-6043",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "11:16",
-    "gateOut": "12:19"
+    "gateOut": "12:19",
+    "plate": "71-6126",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "11:36",
-    "gateOut": "12:39"
+    "gateOut": "12:39",
+    "plate": "74-9619",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "11:46",
-    "gateOut": "12:53"
+    "gateOut": "12:53",
+    "plate": "69-6528",
+    "province": "กรุงเทพมหานคร"
   },
   {
     "gateIn": "11:48",
-    "gateOut": "13:05"
+    "gateOut": "13:05",
+    "plate": "75-1688",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "12:00",
-    "gateOut": "13:11"
+    "gateOut": "13:11",
+    "plate": "700-0321",
+    "province": "กรุงเทพมหานคร"
   },
   {
     "gateIn": "12:16",
-    "gateOut": "13:24"
+    "gateOut": "13:24",
+    "plate": "71-6127",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "12:07",
-    "gateOut": "13:44"
+    "gateOut": "13:44",
+    "plate": "75-0182",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "12:50",
-    "gateOut": "13:52"
+    "gateOut": "13:52",
+    "plate": "75-0458",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "13:18",
-    "gateOut": "14:23"
+    "gateOut": "14:23",
+    "plate": "74-5711",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "13:26",
-    "gateOut": "14:35"
+    "gateOut": "14:35",
+    "plate": "71-6040",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "13:57",
-    "gateOut": "15:06"
+    "gateOut": "15:06",
+    "plate": "71-6062",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "14:02",
-    "gateOut": "15:12"
+    "gateOut": "15:12",
+    "plate": "71-6246",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "14:18",
-    "gateOut": "15:22"
+    "gateOut": "15:22",
+    "plate": "74-9618",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "14:30",
-    "gateOut": "15:44"
+    "gateOut": "15:44",
+    "plate": "71-6193",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "14:36",
-    "gateOut": "15:41"
+    "gateOut": "15:41",
+    "plate": "71-6243",
+    "province": "ปทุมธานี"
   },
   {
     "gateIn": "14:58",
-    "gateOut": "16:07"
+    "gateOut": "16:07",
+    "plate": "75-0462",
+    "province": "ชลบุรี"
   },
   {
     "gateIn": "15:22",
-    "gateOut": "16:28"
+    "gateOut": "16:28",
+    "plate": "71-6043",
+    "province": "ปทุมธานี"
   }
 ]
