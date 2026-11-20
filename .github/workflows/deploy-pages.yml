@@ -9,6 +9,7 @@ on:
       - "test-sheet.cjs"
       - "test-export-grid.cjs"
       - "test-pcu.cjs"
+      - "tests/**"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -37,6 +38,7 @@ jobs:
           node --check dist/timeline.js
           node --check dist/pcu.js
           node --check dist/pcu-chart.js
+          node --check tests/browser-pcu.cjs
       - name: Verify vehicle rounds
         run: node check.cjs
       - name: Verify Google Sheets feed parsing
@@ -45,6 +47,20 @@ jobs:
         run: node test-export-grid.cjs
       - name: Verify PCU hourly road traffic against real Sheets data
         run: node test-pcu.cjs
+      - name: Install browser smoke-test dependencies
+        run: npm install --no-save --no-package-lock playwright-core@1.56.1 pngjs@7.0.0 html2canvas@1.4.1
+      - name: Test SVG PCU graph, date switching and PNG export in Chrome
+        run: node tests/browser-pcu.cjs
+      - name: Upload browser screenshots for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pcu-browser-verification
+          path: |
+            tests/pcu-browser.png
+            tests/pcu-export.png
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Disable Jekyll processing for static files
         run: touch dist/.nojekyll
       - name: Upload GitHub Pages artifact
