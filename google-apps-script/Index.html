@@ -21,6 +21,42 @@
 .pcu-footnote{margin:12px 0 0;font-size:12px;color:#74869a;line-height:1.7}
 @media(max-width:700px){.pcu-card{padding:14px;margin-top:18px}.pcu-graphic svg{min-width:1050px}.pcu-title{font-size:18px}}
 @media print{.pcu-card{break-inside:avoid;page-break-inside:avoid}.pcu-graphic{overflow:visible}.pcu-graphic svg{min-width:0}}
+
+
+/* Calendar: weeks explicitly include Sunday and Saturday, with disabled no-data days. */
+.tl-tools-left{position:relative;z-index:6}
+.tl-date-wrap{position:relative;gap:9px;min-width:225px}
+.tl-date-select[hidden]{display:none!important}
+.tl-calendar-button{border:none;background:transparent;color:#164671;min-width:158px;text-align:left;padding:8px 2px;font:650 16px 'Sarabun','Noto Sans Thai',Tahoma,sans-serif;cursor:pointer}
+.tl-calendar-panel{position:absolute;top:calc(100% + 5px);left:0;width:310px;max-width:min(94vw,340px);border:1px solid #cbdeef;border-radius:14px;background:#fff;box-shadow:0 14px 36px #122c4d2a;padding:14px;z-index:70;font-family:'Sarabun','Noto Sans Thai',Tahoma,sans-serif}
+.tl-calendar-panel[hidden]{display:none!important}
+.tl-cal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;color:#173c63}
+.tl-cal-head button{display:grid;place-items:center;background:#eef5fb;color:#145081;border:0;border-radius:8px;width:32px;height:32px;padding:0;font-size:26px}
+.tl-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.tl-cal-weekday{text-align:center;font-size:13px;font-weight:750;padding:7px 0;color:#4f6c83}
+.tl-cal-weekday.sunday,.tl-cal-day.sunday{color:#ba5258}
+.tl-cal-weekday.saturday,.tl-cal-day.saturday{color:#3563bc}
+.tl-cal-day{border:0;border-radius:9px;padding:0;min-width:0;height:35px;background:#eff7fc;color:#183d5b;font-size:14px;font-weight:650;cursor:pointer}
+.tl-cal-day:disabled{background:transparent;color:#b8c6d3;cursor:default;font-weight:400}
+.tl-cal-day.selected{background:#0d70bb;color:white;box-shadow:0 1px 5px #0a579047}
+.tl-cal-day:not(:disabled):hover{outline:2px solid #8bc5ec}
+.tl-cal-hint{margin-top:11px;font-size:11px;color:#73899d;text-align:center}
+.tl-travel-controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:2px 0 8px;padding:8px 12px;background:#f6fafe;border:1px solid #e0ebf5;border-radius:10px;font-family:'Sarabun','Noto Sans Thai',Tahoma,sans-serif}
+.tl-travel-toggle{display:inline-flex;gap:9px;align-items:center;font-size:13px;font-weight:750;color:#254d70;cursor:pointer}
+.tl-travel-toggle input{width:17px;height:17px;accent-color:#317bc4;cursor:pointer;margin:0}
+.tl-travel-help{font-size:12px;color:#7c91a4;line-height:1.5}
+.tl-travel-legend[hidden]{display:none!important}
+.tl-swatch-in{background:#9bc8ea}.tl-swatch-out{background:#9cabbc}.tl-swatch-depot{background:#d6ae70}
+.tl-table td.tl-chart{isolation:isolate}
+.tl-bar{z-index:3}
+.tl-drop{z-index:4}
+.tl-trip-segment{position:absolute;box-sizing:border-box;pointer-events:auto;border-radius:9px;z-index:1}
+.tl-trip-in{height:7px;top:9px;background:#a0cced;border:1px solid #78b6e2;opacity:.9}
+.tl-trip-out{height:7px;top:9px;background:#9eacbd;border:1px solid #798da5;opacity:.8}
+.tl-trip-depot{height:4px;top:2px;background:#dbb677;border-radius:6px;box-shadow:0 0 0 1px #b9935d55;min-width:2px;z-index:2}
+.tl-trip-bridge{position:absolute;top:21px;height:0;border-top:1px dashed #bf9a65;opacity:.66;pointer-events:none;z-index:1}
+@media(max-width:700px){.tl-travel-controls{align-items:flex-start;gap:5px}.tl-travel-help{flex-basis:100%}.tl-calendar-panel{left:0}}
+@media print{.tl-travel-controls{display:none!important}.tl-calendar-panel{display:none!important}}
 </style><script>(function(root){
 const normalize=s=>String(s||'').normalize('NFKC').trim().toUpperCase().replace(/[\s‐‑–—-]/g,'');
 const time=s=>/^([01]\d|2[0-3]):[0-5]\d$/.test(s)?Number(s.slice(0,2))*60+Number(s.slice(3)):NaN;
@@ -160,7 +196,7 @@ window.FuelSheet={load(){return new Promise((resolve,reject)=>{
 })(typeof globalThis!=='undefined'?globalThis:this);
 </script><script>(async()=>{
 const host=document.getElementById('nativeTimeline');
-host.innerHTML=`<div class="tl-title"><span class="truck">▰</span><div><h1>บันทึกการรับน้ำมันดีเซล โรงไฟฟ้าจะนะ</h1><p>โรงไฟฟ้าจะนะ จ.สงขลา ｜ เลือกวันที่จาก Google Sheets ｜ ป้อม 1</p></div></div><div class="tl-tools"><div class="tl-tools-left"><label class="tl-date-wrap" title="เลือกวันที่"><svg class="tl-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 3v4M17 3v4M3 10h18" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><select id="tlDateSelect" class="tl-date-select" aria-label="เลือกวันที่ข้อมูลใน Google Sheets"></select></label></div><div class="tl-tools-right"><button id="tlRefresh" class="tl-icon-btn" title="รีเฟรชจาก Google Sheets" aria-label="รีเฟรชจาก Google Sheets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.8 9a7 7 0 0 1 12.5-2L20 12M4 12l1.7 5A7 7 0 0 0 18.2 15"/></svg></button><button id="tlExportPng" class="tl-icon-btn" title="บันทึกภาพ PNG" aria-label="บันทึกภาพ PNG"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M6 16l4-4 3 3 3-4 3 5"/><circle cx="9" cy="9" r="1.3" fill="currentColor" stroke="none"/></svg></button><button id="tlPrint" class="tl-icon-btn" title="พิมพ์กราฟ" aria-label="พิมพ์กราฟ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M7 14h10v7H7zM17 11h1"/></svg></button><a id="tlOpenSheet" class="tl-icon-btn" href="https://docs.google.com/spreadsheets/d/1kaAYhEhTywYQEKrhFIqJDrcs4Zav0BhP97cl_sZ6Als/edit#gid=2062218599" target="_blank" rel="noopener noreferrer" title="เปิด Google Sheets" aria-label="เปิด Google Sheets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 4h7v7M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"/></svg></a></div></div><p id="tlNote" class="muted">กำลังอ่าน Google Sheets…</p><div id="tlKpis" class="tl-kpis"></div><div class="tl-overflow"><table class="tl-table"><thead><tr><th>ลำดับ<br><small>(ตามเวลา Unloading)</small></th><th>รอบที่</th><th>เลขทะเบียนรถ</th><th>เวลาเข้า</th><th>เวลา Unloading</th><th>เวลาออก</th><th>ปริมาณรับ<br><small>(ลิตร @86°F)</small></th><th class="tl-chart-head">ช่วงเวลาปฏิบัติงาน (เวลาเข้า – ออก ในโรงไฟฟ้า)<div id="tlAxis"></div></th></tr></thead><tbody id="tlBody"></tbody></table></div><div class="tl-legend"><b>สัญลักษณ์</b><span><i class="tl-swatch purple"></i>รถที่วิ่ง 3 รอบในวันเดียว</span><span><i class="tl-swatch teal"></i>รถที่วิ่ง 2 รอบในวันเดียว</span><span><i class="tl-swatch orange"></i>รถที่วิ่ง 1 รอบในวันเดียว</span><span>💧 เวลา Unloading (รับน้ำมันลงถัง)</span><span id="tlReviewLegend" hidden>⚠ ลายมือต้องยืนยัน</span></div><section id="pcuCard" class="pcu-card" aria-label="กราฟปริมาณรถบรรทุกน้ำมันบนถนนสูงสุดรายชั่วโมง" hidden><h2 class="pcu-title">ปริมาณรถบรรทุกน้ำมันบนถนนสูงสุดรายชั่วโมง (PCU)</h2><p class="pcu-subtitle">คำนวณรถพร้อมกันสูงสุดทุก 1 นาที · เวลาเดินทางขามาและขากลับ 60 นาที · รถบรรทุก 2.5 PCU/คัน · Safety Factor 1.10</p><div class="pcu-summary" aria-live="polite"></div><div class="pcu-graphic"></div><div class="pcu-hour-detail" aria-live="polite"></div><div class="pcu-legend"><span><i class="pcu-key pcu-key-normal"></i>ไม่เกินเกณฑ์</span><span><i class="pcu-key pcu-key-high"></i>มากกว่า 38 PCU</span><span><i class="pcu-key pcu-key-limit"></i>เส้นอ้างอิง 38 PCU</span></div><p class="pcu-footnote">แสดงจำนวนรถพร้อมกันสูงสุดที่แปลงเป็น PCU ไม่ใช่อัตราการไหลของจราจร (PCU/ชั่วโมง) และเส้น 38 PCU เป็นค่าอ้างอิงเพื่อบริหารรถ ไม่ใช่เกณฑ์ตัดสิน EIA โดยตรง</p></section>`;
+host.innerHTML=`<div class="tl-title"><span class="truck">▰</span><div><h1>บันทึกการรับน้ำมันดีเซล โรงไฟฟ้าจะนะ</h1><p>โรงไฟฟ้าจะนะ จ.สงขลา ｜ เลือกวันที่จาก Google Sheets ｜ ป้อม 1</p></div></div><div class="tl-tools"><div class="tl-tools-left"><label class="tl-date-wrap" title="เลือกวันที่"><svg class="tl-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 3v4M17 3v4M3 10h18" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><select id="tlDateSelect" class="tl-date-select" aria-label="เลือกวันที่ข้อมูลใน Google Sheets" hidden></select><button type="button" id="tlCalendarButton" class="tl-calendar-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="tlCalendarPanel">เลือกวันที่ ▾</button></label><div id="tlCalendarPanel" class="tl-calendar-panel" role="dialog" aria-label="เลือกวันที่จากปฏิทิน" hidden><div class="tl-cal-head"><button type="button" id="tlCalPrev" aria-label="เดือนก่อน">‹</button><strong id="tlCalMonth"></strong><button type="button" id="tlCalNext" aria-label="เดือนถัดไป">›</button></div><div id="tlCalGrid" class="tl-cal-grid"></div><div class="tl-cal-hint">วันที่มีข้อมูลเลือกได้ · วันเสาร์–อาทิตย์แสดงสีแยก</div></div></div><div class="tl-tools-right"><button id="tlRefresh" class="tl-icon-btn" title="รีเฟรชจาก Google Sheets" aria-label="รีเฟรชจาก Google Sheets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.8 9a7 7 0 0 1 12.5-2L20 12M4 12l1.7 5A7 7 0 0 0 18.2 15"/></svg></button><button id="tlExportPng" class="tl-icon-btn" title="บันทึกภาพ PNG" aria-label="บันทึกภาพ PNG"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M6 16l4-4 3 3 3-4 3 5"/><circle cx="9" cy="9" r="1.3" fill="currentColor" stroke="none"/></svg></button><button id="tlPrint" class="tl-icon-btn" title="พิมพ์กราฟ" aria-label="พิมพ์กราฟ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M7 14h10v7H7zM17 11h1"/></svg></button><a id="tlOpenSheet" class="tl-icon-btn" href="https://docs.google.com/spreadsheets/d/1kaAYhEhTywYQEKrhFIqJDrcs4Zav0BhP97cl_sZ6Als/edit#gid=2062218599" target="_blank" rel="noopener noreferrer" title="เปิด Google Sheets" aria-label="เปิด Google Sheets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 4h7v7M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"/></svg></a></div></div><div class="tl-travel-controls"><label class="tl-travel-toggle"><input type="checkbox" id="tlShowTravel"><span>แสดงเส้นทางไป–กลับและเติมน้ำมันที่คลัง</span></label><span class="tl-travel-help" id="tlTravelHelp">ขามา / ขากลับ 60 นาที · ช่วงเติมที่คลังคำนวณจากเวลาระหว่างเที่ยว (ประมาณ)</span></div><p id="tlNote" class="muted">กำลังอ่าน Google Sheets…</p><div id="tlKpis" class="tl-kpis"></div><div class="tl-overflow"><table class="tl-table"><thead><tr><th>ลำดับ<br><small>(ตามเวลา Unloading)</small></th><th>รอบที่</th><th>เลขทะเบียนรถ</th><th>เวลาเข้า</th><th>เวลา Unloading</th><th>เวลาออก</th><th>ปริมาณรับ<br><small>(ลิตร @86°F)</small></th><th class="tl-chart-head">ช่วงเวลาปฏิบัติงาน (เวลาเข้า – ออก ในโรงไฟฟ้า)<div id="tlAxis"></div></th></tr></thead><tbody id="tlBody"></tbody></table></div><div class="tl-legend"><b>สัญลักษณ์</b><span><i class="tl-swatch purple"></i>รถที่วิ่ง 3 รอบในวันเดียว</span><span><i class="tl-swatch teal"></i>รถที่วิ่ง 2 รอบในวันเดียว</span><span><i class="tl-swatch orange"></i>รถที่วิ่ง 1 รอบในวันเดียว</span><span>💧 เวลา Unloading (รับน้ำมันลงถัง)</span><span class="tl-travel-legend" hidden><i class="tl-swatch tl-swatch-in"></i>วิ่งมาจากคลัง 60 นาที</span><span class="tl-travel-legend" hidden><i class="tl-swatch tl-swatch-out"></i>กลับคลัง 60 นาที</span><span class="tl-travel-legend" hidden><i class="tl-swatch tl-swatch-depot"></i>ช่วงเติมที่คลัง (ประมาณ)</span><span id="tlReviewLegend" hidden>⚠ ลายมือต้องยืนยัน</span></div><section id="pcuCard" class="pcu-card" aria-label="กราฟปริมาณรถบรรทุกน้ำมันบนถนนสูงสุดรายชั่วโมง" hidden><h2 class="pcu-title">ปริมาณรถบรรทุกน้ำมันบนถนนสูงสุดรายชั่วโมง (PCU)</h2><p class="pcu-subtitle">คำนวณรถพร้อมกันสูงสุดทุก 1 นาที · เวลาเดินทางขามาและขากลับ 60 นาที · รถบรรทุก 2.5 PCU/คัน · Safety Factor 1.10</p><div class="pcu-summary" aria-live="polite"></div><div class="pcu-graphic"></div><div class="pcu-hour-detail" aria-live="polite"></div><div class="pcu-legend"><span><i class="pcu-key pcu-key-normal"></i>ไม่เกินเกณฑ์</span><span><i class="pcu-key pcu-key-high"></i>มากกว่า 38 PCU</span><span><i class="pcu-key pcu-key-limit"></i>เส้นอ้างอิง 38 PCU</span></div><p class="pcu-footnote">แสดงจำนวนรถพร้อมกันสูงสุดที่แปลงเป็น PCU ไม่ใช่อัตราการไหลของจราจร (PCU/ชั่วโมง) และเส้น 38 PCU เป็นค่าอ้างอิงเพื่อบริหารรถ ไม่ใช่เกณฑ์ตัดสิน EIA โดยตรง</p></section>`;
 const minutes=s=>{if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(s||''))throw Error('เวลาต้องเป็น HH:mm');return +s.slice(0,2)*60 + +s.slice(3)};
 
 // Use a raster oil-drop marker so full-report PNG exports retain every marker.
@@ -186,14 +222,52 @@ if(new Set(rows.map(r=>r.date)).size>1)throw Error('กรุณาเลือ�
 const keys=new Set();for(const r of rows){const key=r.id+'|'+r.start;if(keys.has(key))throw Error('พบทะเบียนและเวลาเข้าซ้ำ');keys.add(key)}
 rows.sort((a,b)=>a.start-b.start);for(const r of rows)r.round=rounds[r.id]=(rounds[r.id]||0)+1;
 rows.sort((a,b)=>(a.unload??a.start)-(b.unload??b.start)||a.start-b.start);
-const min=Math.floor(Math.min(...rows.map(r=>r.start))/60)*60,max=Math.max(min+60,Math.ceil(Math.max(...rows.map(r=>r.finish??r.start),...rows.map(r=>r.unload??r.start))/60)*60),span=max-min;
+const showTravel=document.getElementById('tlShowTravel').checked;
+const byTruck=new Map();
+for(const r of [...rows].sort((a,b)=>a.start-b.start)){
+ const prev=byTruck.get(r.id);
+ // Depot dwell is inferred, not measured. Only display when the recorded gap can fit both 60-min drives.
+ if(prev&&prev.finish!==null){
+  const depotStart=prev.finish+60,depotEnd=r.start-60;
+  if(depotEnd>=depotStart)r.depot={start:depotStart,end:depotEnd,previous:prev};
+ }
+ byTruck.set(r.id,r);
+}
+const baseMin=Math.min(...rows.map(r=>r.start)),baseMax=Math.max(...rows.map(r=>r.finish??r.start),...rows.map(r=>r.unload??r.start));
+const min=Math.floor((showTravel?baseMin-60:baseMin)/60)*60;
+const max=Math.max(min+60,Math.ceil((showTravel?Math.max(...rows.map(r=>(r.finish??r.start)+60)):baseMax)/60)*60),span=max-min;
+host.querySelectorAll('.tl-travel-legend').forEach(el=>{el.hidden=!showTravel});
 const fmt=n=>String(Math.floor(n/60)%24).padStart(2,'0')+':'+String(n%60).padStart(2,'0')+(n>=1440?' +1 วัน':'');
 const qty=rows.reduce((s,r)=>s+r.volume,0),durations=rows.filter(r=>r.finish!==null).map(r=>r.finish-r.start),avg=durations.length?Math.round(durations.reduce((a,b)=>a+b)/durations.length):null;
 const values=[['⟳','จำนวนรอบรวม',rows.length+' รอบ'],['◕','ปริมาณที่รับรวม',qty?qty.toLocaleString('th-TH',{maximumFractionDigits:2})+' ลิตร':'—'],['▤','ปริมาณเฉลี่ยต่อรอบ',qty?(qty/rows.length).toLocaleString('th-TH',{maximumFractionDigits:1})+' ลิตร/รอบ':'—'],['⇥','เวลาเข้าพื้นที่เร็วสุด',fmt(Math.min(...rows.map(r=>r.start)))+' น.'],['⇤','เวลาออกจากพื้นที่ช้าสุด',durations.length?fmt(Math.max(...rows.filter(r=>r.finish!==null).map(r=>r.finish)))+' น.':'—'],['◷','ระยะเวลาเฉลี่ยในพื้นที่',avg===null?'—':Math.floor(avg/60)+' ชม. '+String(avg%60).padStart(2,'0')+' นาที'],['▰','จำนวนรถบรรทุก',Object.values(counts).filter(n=>n===3).length+' คัน วิ่ง 3 รอบ / '+Object.values(counts).filter(n=>n===2).length+' คัน วิ่ง 2 รอบ / '+Object.values(counts).filter(n=>n===1).length+' คัน วิ่ง 1 รอบ'+(Object.values(counts).some(n=>n>3)?' / '+Object.values(counts).filter(n=>n>3).length+' คัน เกิน 3 รอบ':'')]];
 const kpis=document.getElementById('tlKpis');kpis.replaceChildren();for(const [icon,label,value]of values){const card=document.createElement('div');card.className='tl-kpi';const small=document.createElement('div');small.textContent=icon+'  '+label;const strong=document.createElement('strong');strong.textContent=value;card.append(small,strong);kpis.append(card)}
 const axis=document.getElementById('tlAxis');axis.replaceChildren();for(let t=min;t<=max;t+=60){const tick=document.createElement('span');tick.style.left=(t-min)/span*100+'%';tick.textContent=fmt(t);axis.append(tick)}
 const reviewLegend=document.getElementById('tlReviewLegend');if(reviewLegend)reviewLegend.hidden=!rows.some(r=>r.reviewRequired);
-const body=document.getElementById('tlBody');body.replaceChildren();for(const [i,r]of rows.entries()){const tr=document.createElement('tr');for(const v of [i+1,r.round,r.plate+(r.reviewRequired?' ⚠':''),r.gateIn,r.unloadFallback?r.gateIn:r.unloading,r.gateOut||'—',r.volume>0?r.volume.toLocaleString('th-TH',{maximumFractionDigits:2}):'—']){const td=document.createElement('td');td.textContent=v;if(r.reviewRequired)td.title=r.sourceNote||'ต้องตรวจทาน';tr.append(td)}const cell=document.createElement('td');cell.className='tl-chart';cell.style.setProperty('--step',60/span*100+'%');const bar=document.createElement('div');bar.className='tl-bar '+(counts[r.id]>=3?'purple':counts[r.id]===2?'teal':'orange');bar.style.left=(r.start-min)/span*100+'%';bar.style.width=Math.max(.2,((r.finish??r.start)-r.start)/span*100)+'%';bar.title=r.plate+' เที่ยว '+r.round+' | '+r.gateIn+'–'+(r.gateOut||'ยังไม่ออก');cell.append(bar);if(r.unload!==null){const dot=document.createElement('img');dot.className='tl-drop';dot.src=oilDropPng;dot.alt='';dot.setAttribute('aria-label','เวลาเริ่มรับน้ำมันลงถัง');dot.style.left=(r.unload-min)/span*100+'%';dot.title=r.unloadFallback?'Unloading ใช้เวลาเข้าแทน ('+r.gateIn+')':'Unloading '+r.unloading;cell.append(dot)}tr.append(cell);body.append(tr)}
+const body=document.getElementById('tlBody');body.replaceChildren();for(const [i,r]of rows.entries()){const tr=document.createElement('tr');for(const v of [i+1,r.round,r.plate+(r.reviewRequired?' ⚠':''),r.gateIn,r.unloadFallback?r.gateIn:r.unloading,r.gateOut||'—',r.volume>0?r.volume.toLocaleString('th-TH',{maximumFractionDigits:2}):'—']){const td=document.createElement('td');td.textContent=v;if(r.reviewRequired)td.title=r.sourceNote||'ต้องตรวจทาน';tr.append(td)}const cell=document.createElement('td');cell.className='tl-chart';cell.style.setProperty('--step',60/span*100+'%');const bar=document.createElement('div');bar.className='tl-bar '+(counts[r.id]>=3?'purple':counts[r.id]===2?'teal':'orange');bar.style.left=(r.start-min)/span*100+'%';bar.style.width=Math.max(.2,((r.finish??r.start)-r.start)/span*100)+'%';bar.title=r.plate+' เที่ยว '+r.round+' | '+r.gateIn+'–'+(r.gateOut||'ยังไม่ออก');cell.append(bar);
+if(showTravel){
+ const addSegment=(start,end,cssClass,description)=>{
+  if(!(end>start))return;
+  const segment=document.createElement('div');
+  segment.className='tl-trip-segment '+cssClass;
+  segment.style.left=(start-min)/span*100+'%';
+  segment.style.width=(end-start)/span*100+'%';
+  segment.title=r.plate+' · '+description+' · '+fmt(start)+'–'+fmt(end);
+  cell.append(segment);
+ };
+ addSegment(r.start-60,r.start,'tl-trip-in','เดินทางจากคลังมายังโรงไฟฟ้า (สมมติ 60 นาที)');
+ if(r.finish!==null)addSegment(r.finish,r.finish+60,'tl-trip-out','เดินทางจากโรงไฟฟ้ากลับคลัง (สมมติ 60 นาที)');
+ if(r.depot){
+  // A thin line connects the previous unloading cycle to the next inbound trip
+  // on this vehicle's next-trip lane, avoiding lines crossing other truck rows.
+  addSegment(r.depot.start,r.depot.end,'tl-trip-depot','เวลาคงเหลือที่คลัง (ประมาณ ไม่ใช่เวลาจริง)');
+  const bridge=document.createElement('div');bridge.className='tl-trip-bridge';
+  bridge.style.left=(r.depot.start-min)/span*100+'%';
+  bridge.style.width=(r.start-60-r.depot.start)/span*100+'%';
+  bridge.title='เชื่อมช่วงเวลาที่คลังกับเที่ยวถัดไป';
+  cell.append(bridge);
+ }
+}
+if(r.unload!==null){const dot=document.createElement('img');dot.className='tl-drop';dot.src=oilDropPng;dot.alt='';dot.setAttribute('aria-label','เวลาเริ่มรับน้ำมันลงถัง');dot.style.left=(r.unload-min)/span*100+'%';dot.title=r.unloadFallback?'Unloading ใช้เวลาเข้าแทน ('+r.gateIn+')':'Unloading '+r.unloading;cell.append(dot)}tr.append(cell);body.append(tr)}
 try{if(typeof window.renderPcuChart==='function')window.renderPcuChart(data)}catch(pcuError){console.error('PCU chart',pcuError);const card=document.getElementById('pcuCard');if(card){card.hidden=false;card.querySelector('.pcu-summary').textContent='ไม่สามารถคำนวณกราฟ PCU: '+pcuError.message}}
 document.getElementById('tlNote').textContent=note||'ข้อมูลจาก Google Sheets';
 }
@@ -227,6 +301,7 @@ exportPngButton.onclick=async()=>{
   const pcuSvg=source.querySelector('.pcu-graphic svg');
   if(document.fonts?.ready)await document.fonts.ready;
   const captureWidth=Math.max(source.clientWidth,table?.scrollWidth||0,pcuSvg?.getBoundingClientRect().width||0,1500)+28;
+  closeCalendar();
   const canvas=await html2canvas(source,{
    backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false,
    width:captureWidth,windowWidth:captureWidth,scrollX:0,scrollY:0,
@@ -270,7 +345,40 @@ exportPngButton.onclick=async()=>{
  finally{exportPngButton.disabled=false;exportPngButton.title=oldTitle}
 };
 let sheetRows=[];const select=document.getElementById('tlDateSelect');const refresh=document.getElementById('tlRefresh');
-function showDay(){const chosen=sheetRows.filter(r=>r.date===select.value);render(chosen,'อ่านจาก Google Sheets · '+new Date().toLocaleTimeString('th-TH',{timeZone:'Asia/Bangkok'})+' น.'+(chosen.some(r=>r.reviewRequired)?' · ⚠ มีรายการที่ต้องยืนยันทะเบียน':''));host.querySelector('.tl-title p').textContent='โรงไฟฟ้าจะนะ จ.สงขลา ｜ วันที่ '+new Date(select.value+'T12:00:00+07:00').toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Bangkok'})+' ｜ ป้อม 1';}
+const calButton=document.getElementById('tlCalendarButton'),calPanel=document.getElementById('tlCalendarPanel');
+const calGrid=document.getElementById('tlCalGrid'),calMonthLabel=document.getElementById('tlCalMonth');
+let calYear=2026,calMonth=10;
+const availableDays=()=>new Set([...select.options].map(option=>option.value));
+const localDate=iso=>new Date(iso+'T12:00:00+07:00');
+const pad2=n=>String(n).padStart(2,'0');
+function drawCalendar(){
+ const first=new Date(Date.UTC(calYear,calMonth,1));
+ calMonthLabel.textContent=first.toLocaleDateString('th-TH',{month:'long',year:'numeric',timeZone:'UTC'});
+ calGrid.replaceChildren();
+ const weekdays=['อา','จ','อ','พ','พฤ','ศ','ส'];
+ weekdays.forEach((day,i)=>{const node=document.createElement('span');node.className='tl-cal-weekday'+(i===0?' sunday':i===6?' saturday':'');node.textContent=day;calGrid.append(node)});
+ const offset=first.getUTCDay(),days=new Date(Date.UTC(calYear,calMonth+1,0)).getUTCDate(),allowed=availableDays();
+ for(let n=0;n<offset;n++){const blank=document.createElement('span');blank.className='tl-cal-empty';calGrid.append(blank)}
+ for(let n=1;n<=days;n++){
+  const date=calYear+'-'+pad2(calMonth+1)+'-'+pad2(n),weekday=new Date(Date.UTC(calYear,calMonth,n)).getUTCDay();
+  const button=document.createElement('button');button.type='button';button.textContent=String(n);
+  button.className='tl-cal-day'+(weekday===0?' sunday':weekday===6?' saturday':'')+(date===select.value?' selected':'');
+  button.disabled=!allowed.has(date);
+  button.setAttribute('aria-label',localDate(date).toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Bangkok'}));
+  button.setAttribute('aria-pressed',String(date===select.value));
+  button.onclick=()=>{select.value=date;select.dispatchEvent(new Event('change',{bubbles:true}));closeCalendar()};
+  calGrid.append(button);
+ }
+}
+function closeCalendar(){calPanel.hidden=true;calButton.setAttribute('aria-expanded','false')}
+calButton.onclick=()=>{if(!calPanel.hidden){closeCalendar();return}const d=select.value;if(d){calYear=+d.slice(0,4);calMonth=+d.slice(5,7)-1}drawCalendar();calPanel.hidden=false;calButton.setAttribute('aria-expanded','true')};
+document.getElementById('tlCalPrev').onclick=()=>{const d=new Date(Date.UTC(calYear,calMonth-1,1));calYear=d.getUTCFullYear();calMonth=d.getUTCMonth();drawCalendar()};
+document.getElementById('tlCalNext').onclick=()=>{const d=new Date(Date.UTC(calYear,calMonth+1,1));calYear=d.getUTCFullYear();calMonth=d.getUTCMonth();drawCalendar()};
+document.addEventListener('pointerdown',event=>{if(!calPanel.hidden&&!event.target.closest('.tl-date-wrap,.tl-calendar-panel'))closeCalendar()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeCalendar()});
+document.getElementById('tlShowTravel').addEventListener('change',()=>{if(sheetRows.length&&select.value)showDay()});
+
+function showDay(){if(select.value){calButton.textContent=localDate(select.value).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Bangkok'})+' ▾';calYear=+select.value.slice(0,4);calMonth=+select.value.slice(5,7)-1;if(!calPanel.hidden)drawCalendar()}const chosen=sheetRows.filter(r=>r.date===select.value);render(chosen,'อ่านจาก Google Sheets · '+new Date().toLocaleTimeString('th-TH',{timeZone:'Asia/Bangkok'})+' น.'+(chosen.some(r=>r.reviewRequired)?' · ⚠ มีรายการที่ต้องยืนยันทะเบียน':''));host.querySelector('.tl-title p').textContent='โรงไฟฟ้าจะนะ จ.สงขลา ｜ วันที่ '+new Date(select.value+'T12:00:00+07:00').toLocaleDateString('th-TH',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Bangkok'})+' ｜ ป้อม 1';}
 async function refreshSheet(){refresh.disabled=true;document.getElementById('tlNote').textContent='กำลังอ่าน Google Sheets…';try{const result=await window.FuelSheet.load();const days=[...new Set(result.map(r=>r.date))].sort();if(!days.length)throw Error('ชีตยังไม่มีรายการรถ');const previous=select.value;sheetRows=result;select.replaceChildren(...days.map(day=>{const o=document.createElement('option');o.value=day;o.textContent=day;return o}));select.value=days.includes(previous)?previous:days.at(-1);showDay()}catch(e){document.getElementById('tlNote').textContent='อ่านชีตไม่สำเร็จ: '+e.message+(sheetRows.length?' · กราฟที่เห็นเป็นข้อมูลจากการโหลดครั้งก่อน':'')}finally{refresh.disabled=false}}
 select.onchange=showDay;refresh.onclick=refreshSheet;await refreshSheet();
 })();
