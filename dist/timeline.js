@@ -51,7 +51,8 @@ for(const r of [...rows].sort((a,b)=>a.start-b.start)){
  byTruck.set(r.id,r);
 }
 const baseMin=Math.min(...rows.map(r=>r.start)),baseMax=Math.max(...rows.map(r=>r.finish??r.start),...rows.map(r=>r.unload??r.start));
-const min=Math.floor((showTravel?baseMin-60:baseMin)/60)*60;
+// Do not extend the chart axis earlier than 06:00, even if the modeled trip begins before that.
+const min=Math.max(6*60,Math.floor((showTravel?baseMin-60:baseMin)/60)*60);
 const max=Math.max(min+60,Math.ceil((showTravel?Math.max(...rows.map(r=>(r.finish??r.start)+60)):baseMax)/60)*60),span=max-min;
 host.querySelectorAll('.tl-travel-legend').forEach(el=>{el.hidden=!showTravel});
 const fmt=n=>String(Math.floor(n/60)%24).padStart(2,'0')+':'+String(n%60).padStart(2,'0')+(n>=1440?' +1 วัน':'');
@@ -76,11 +77,12 @@ for(const [i,r] of rows.entries()){
  // row. Other rows retain real gate/unload/round figures, but no duplicate bars.
  const cycles=showTravel?(r.round===1?cyclesByTruck.get(r.id):[]):[r];
  const addSegment=(trip,start,end,cssClass,description,extra={})=>{
-  if(!(end>start))return null;
+  if(!(end>start)||end<=min||start>=max)return null;
+  const visibleStart=Math.max(start,min),visibleEnd=Math.min(end,max);
   const segment=document.createElement('div');
   segment.className=cssClass==='tl-unloading-dark'?'tl-unloading-dark '+(counts[trip.id]>=3?'purple':counts[trip.id]===2?'teal':'orange'):'tl-trip-segment '+cssClass;
-  segment.style.left=(start-min)/span*100+'%';
-  segment.style.width=(end-start)/span*100+'%';
+  segment.style.left=(visibleStart-min)/span*100+'%';
+  segment.style.width=(visibleEnd-visibleStart)/span*100+'%';
   segment.title=trip.plate+' · '+description+' · '+fmt(start)+'–'+fmt(end);
   for(const [name,value]of Object.entries(extra))segment.dataset[name]=value;
   cell.append(segment);return segment;
@@ -89,8 +91,10 @@ for(const [i,r] of rows.entries()){
   if(showTravel)addSegment(trip,trip.start-60,trip.start,'tl-trip-in','เดินทางจากคลังมายังโรงไฟฟ้า (ประมาณ 60 นาที)');
   const bar=document.createElement('div');
   bar.className='tl-bar '+(counts[trip.id]>=3?'purple':counts[trip.id]===2?'teal':'orange');
-  bar.style.left=(trip.start-min)/span*100+'%';
-  bar.style.width=Math.max(.2,((trip.finish??trip.start)-trip.start)/span*100)+'%';
+  const visibleStart=Math.max(min,trip.start),visibleEnd=Math.min(max,trip.finish??trip.start);
+  bar.style.left=(visibleStart-min)/span*100+'%';
+  bar.style.width=Math.max(.2,Math.max(0,visibleEnd-visibleStart)/span*100)+'%';
+  if((trip.finish??trip.start)<=min||trip.start>=max)bar.style.display='none';
   const tripRound=Number.isInteger(Number(trip.trip))&&Number(trip.trip)>0?trip.trip:trip.round;
   bar.title=trip.plate+' รอบ '+tripRound+' | '+trip.gateIn+'–'+(trip.gateOut||'ยังไม่ออก');
   cell.append(bar);
@@ -107,7 +111,8 @@ for(const [i,r] of rows.entries()){
    if(dwell>0){
     addSegment(trip,trip.depot.start,trip.depot.end,'tl-trip-depot','เวลาที่คลังโดยประมาณ '+Math.floor(dwell/60)+' ชม. '+String(dwell%60).padStart(2,'0')+' นาที');
     const depotLabel=document.createElement('span');depotLabel.className='tl-depot-duration';
-    depotLabel.style.left=((trip.depot.start+trip.depot.end)/2-min)/span*100+'%';
+    depotLabel.style.left=((Math.max(trip.depot.start,min)+Math.min(trip.depot.end,max))/2-min)/span*100+'%';
+    if(trip.depot.end<=min||trip.depot.start>=max)depotLabel.hidden=true;
     depotLabel.textContent=Math.floor(dwell/60)+' ชม. '+String(dwell%60).padStart(2,'0')+' น.';
     depotLabel.title='เวลาที่คลังโดยประมาณ ไม่ใช่เวลาที่บันทึกการเติมน้ำมันจริง';cell.append(depotLabel);
    }
@@ -117,7 +122,7 @@ for(const [i,r] of rows.entries()){
    dot.setAttribute('aria-label','เวลาเริ่มรับน้ำมันลงถัง');
    dot.style.left=(trip.unload-min)/span*100+'%';
    dot.title=trip.unloadFallback?'Unloading ใช้เวลาเข้าแทน ('+trip.gateIn+')':'Unloading '+trip.unloading;
-   cell.append(dot);
+   if(trip.unload>=min&&trip.unload<=max)cell.append(dot);
   }
  }
  tr.append(cell);body.append(tr);
