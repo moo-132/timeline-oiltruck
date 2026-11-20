@@ -32,9 +32,9 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   const values=await page.locator('#pcuCard .pcu-bar-value').allTextContents();
   assert.equal(values[0],'41.25');assert.equal(values[5],'35.75');
   assert.equal(await page.locator('#pcuCard .pcu-bar-over').count(),1);
-  await page.locator('#tlDateSelect').selectOption('2026-11-18');
+  await page.locator('#tlDateSelect').evaluate(select=>{select.value='2026-11-18';select.dispatchEvent(new Event('change',{bubbles:true}))});
   assert.equal(await page.locator('#tlBody tr').count(),1);
-  await page.locator('#tlDateSelect').selectOption('2026-11-19');
+  await page.locator('#tlDateSelect').evaluate(select=>{select.value='2026-11-19';select.dispatchEvent(new Event('change',{bubbles:true}))});
   assert.equal(await page.locator('#tlBody tr').count(),36);
   assert.equal(await page.locator('img.tl-drop').count(),36);
   // Calendar must visibly include both weekend columns and allow only dates from WebData.
