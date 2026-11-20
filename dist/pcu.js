@@ -3,7 +3,7 @@
  'use strict';
  const FACTOR=2.5,SAFETY=1.1,LIMIT=38,TRAVEL_MINUTES=60;
  const toMinute=value=>{
-  const text=String(value??'').trim(),match=/^([01]\\d|2[0-3]):([0-5]\\d)(?::[0-5]\\d)?$/.exec(text);
+  const text=String(value??'').trim(),match=/^([01]\d|2[0-3]):([0-5]\d)(?::[0-5]\d)?$/.exec(text);
   return match?Number(match[1])*60+Number(match[2]):null;
  };
  const label=minute=>String(Math.floor(minute/60)%24).padStart(2,'0')+':'+String(minute%60).padStart(2,'0');
