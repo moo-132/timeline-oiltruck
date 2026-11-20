@@ -76,7 +76,7 @@ for(const [i,r] of rows.entries()){
  const addSegment=(trip,start,end,cssClass,description,extra={})=>{
   if(!(end>start))return null;
   const segment=document.createElement('div');
-  segment.className='tl-trip-segment '+cssClass;
+  segment.className=cssClass==='tl-unloading-dark'?'tl-unloading-dark':'tl-trip-segment '+cssClass;
   segment.style.left=(start-min)/span*100+'%';
   segment.style.width=(end-start)/span*100+'%';
   segment.title=trip.plate+' · '+description+' · '+fmt(start)+'–'+fmt(end);
