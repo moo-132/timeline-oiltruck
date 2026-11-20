@@ -57,9 +57,13 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert.equal(await page.locator('.tl-bar').count(),36);
   assert.equal(await page.locator('.tl-depot-duration').count(),0);
   const originalOrder=await page.locator('#tlBody tr td:nth-child(3)').allTextContents();
+  const originalRowIdentity=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),number:Number(tr.cells[0].textContent)})));
+  const originalNumbers=new Map(originalRowIdentity.map(r=>[r.plate+'|'+r.gateIn,r.number]));
   await page.locator('#tlShowTravel').check();
   assert.equal(await page.locator('#tlOrderLabel').textContent(),'(แยกกลุ่มตามทะเบียน)');
-  const grouped=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),round:Number(tr.cells[1].textContent)})));
+  const grouped=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),order:Number(tr.cells[0].textContent),round:Number(tr.cells[1].textContent)})));
+  for(const row of grouped)assert.equal(row.order,originalNumbers.get(row.plate+'|'+row.gateIn),'grouped row must preserve original Unloading sequence number');
+  assert.deepEqual(grouped.map(r=>r.order).sort((a,b)=>a-b),Array.from({length:36},(_,i)=>i+1),'original sequence is retained without duplicate or missing numbers');
   const vehicleBlocks=new Set();let lastPlate=null;const groupedTrips=new Map();
   for(const r of grouped){
    if(r.plate!==lastPlate){assert(!vehicleBlocks.has(r.plate),'vehicle group must be contiguous: '+r.plate);vehicleBlocks.add(r.plate);lastPlate=r.plate}
@@ -82,6 +86,18 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert.equal(await page.locator('.tl-combined-chart .tl-drop').count(),36);
   assert.equal(await page.locator('.tl-depot-duration').count(),17);
   assert.equal(await page.locator('.tl-unloading-dark').count(),36);
+  const appearance=await page.evaluate(()=>{
+   const get=(selector)=>{const node=document.querySelector(selector),css=getComputedStyle(node);return {height:parseFloat(css.height),top:parseFloat(css.top),color:css.backgroundColor}};
+   return {plant:get('.tl-combined-chart .tl-bar'),incoming:get('.tl-combined-chart .tl-trip-in'),outgoing:get('.tl-combined-chart .tl-trip-out'),depot:get('.tl-combined-chart .tl-trip-depot'),dark:get('.tl-combined-chart .tl-unloading-dark')};
+  });
+  assert(appearance.plant.height>=18,'residence bar should be prominent');
+  assert.equal(appearance.incoming.height,appearance.outgoing.height);
+  assert.equal(appearance.incoming.height,appearance.depot.height);
+  assert.equal(appearance.incoming.top,appearance.outgoing.top);
+  assert.equal(appearance.incoming.top,appearance.depot.top);
+  assert(appearance.plant.height>appearance.incoming.height,'in-plant bars must be thicker than trip/depot bands');
+  assert.equal(appearance.dark.height,appearance.plant.height);
+  assert.notEqual(appearance.dark.color,'rgba(20, 49, 94, 0.53)','unloading should use toned variant of truck color');
   const laneCounts=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),bars:tr.querySelectorAll('.tl-bar').length})));
   for(const [plate,rounds] of groupedTrips){
    const lines=laneCounts.filter(r=>r.plate===plate);
