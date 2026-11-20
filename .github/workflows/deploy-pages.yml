@@ -59,6 +59,7 @@ jobs:
           path: |
             tests/pcu-browser.png
             tests/pcu-export.png
+            tests/timeline-only-export.png
           if-no-files-found: ignore
           retention-days: 7
       - name: Disable Jekyll processing for static files
