@@ -29,7 +29,7 @@ assert.equal(edge[0].time,'06:00');
 // The source and its two embedded HTML distributions must include valid JavaScript.
 for(const filename of ['dist/index.html','google-apps-script/Index.html']){
  const source=fs.readFileSync(filename,'utf8');
- const scripts=[...source.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)];
+ const scripts=[...source.matchAll(/<script>([\s\S]*?)<\/script>/g)];
  assert(scripts.length>=5,'Expected inline pure PCU and chart modules in '+filename);
  scripts.forEach((m,i)=>new vm.Script(m[1],{filename:filename+':script-'+i}));
  assert(source.includes('id="pcuCard"'),filename+' must include PCU card');
