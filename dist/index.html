@@ -57,6 +57,8 @@
 .tl-trip-bridge{position:absolute;top:21px;height:0;border-top:1px dashed #bf9a65;opacity:.66;pointer-events:none;z-index:1}
 @media(max-width:700px){.tl-travel-controls{align-items:flex-start;gap:5px}.tl-travel-help{flex-basis:100%}.tl-calendar-panel{left:0}}
 @media print{.tl-travel-controls{display:none!important}.tl-calendar-panel{display:none!important}}
+
+.tl-trip-join{position:absolute;width:0;border-left:1.5px dashed #ae8c60;opacity:.40;z-index:2;pointer-events:none;transform:translateX(-.5px)}
 </style><script>(function(root){
 const normalize=s=>String(s||'').normalize('NFKC').trim().toUpperCase().replace(/[\s‐‑–—-]/g,'');
 const time=s=>/^([01]\d|2[0-3]):[0-5]\d$/.test(s)?Number(s.slice(0,2))*60+Number(s.slice(3)):NaN;
@@ -243,7 +245,7 @@ const values=[['⟳','จำนวนรอบรวม',rows.length+' รอบ
 const kpis=document.getElementById('tlKpis');kpis.replaceChildren();for(const [icon,label,value]of values){const card=document.createElement('div');card.className='tl-kpi';const small=document.createElement('div');small.textContent=icon+'  '+label;const strong=document.createElement('strong');strong.textContent=value;card.append(small,strong);kpis.append(card)}
 const axis=document.getElementById('tlAxis');axis.replaceChildren();for(let t=min;t<=max;t+=60){const tick=document.createElement('span');tick.style.left=(t-min)/span*100+'%';tick.textContent=fmt(t);axis.append(tick)}
 const reviewLegend=document.getElementById('tlReviewLegend');if(reviewLegend)reviewLegend.hidden=!rows.some(r=>r.reviewRequired);
-const body=document.getElementById('tlBody');body.replaceChildren();for(const [i,r]of rows.entries()){const tr=document.createElement('tr');for(const v of [i+1,r.round,r.plate+(r.reviewRequired?' ⚠':''),r.gateIn,r.unloadFallback?r.gateIn:r.unloading,r.gateOut||'—',r.volume>0?r.volume.toLocaleString('th-TH',{maximumFractionDigits:2}):'—']){const td=document.createElement('td');td.textContent=v;if(r.reviewRequired)td.title=r.sourceNote||'ต้องตรวจทาน';tr.append(td)}const cell=document.createElement('td');cell.className='tl-chart';cell.style.setProperty('--step',60/span*100+'%');const bar=document.createElement('div');bar.className='tl-bar '+(counts[r.id]>=3?'purple':counts[r.id]===2?'teal':'orange');bar.style.left=(r.start-min)/span*100+'%';bar.style.width=Math.max(.2,((r.finish??r.start)-r.start)/span*100)+'%';bar.title=r.plate+' เที่ยว '+r.round+' | '+r.gateIn+'–'+(r.gateOut||'ยังไม่ออก');cell.append(bar);
+const body=document.getElementById('tlBody');body.replaceChildren();const displayRowIndex=new Map(rows.map((item,index)=>[item,index]));for(const [i,r]of rows.entries()){const tr=document.createElement('tr');for(const v of [i+1,r.round,r.plate+(r.reviewRequired?' ⚠':''),r.gateIn,r.unloadFallback?r.gateIn:r.unloading,r.gateOut||'—',r.volume>0?r.volume.toLocaleString('th-TH',{maximumFractionDigits:2}):'—']){const td=document.createElement('td');td.textContent=v;if(r.reviewRequired)td.title=r.sourceNote||'ต้องตรวจทาน';tr.append(td)}const cell=document.createElement('td');cell.className='tl-chart';cell.style.setProperty('--step',60/span*100+'%');const bar=document.createElement('div');bar.className='tl-bar '+(counts[r.id]>=3?'purple':counts[r.id]===2?'teal':'orange');bar.style.left=(r.start-min)/span*100+'%';bar.style.width=Math.max(.2,((r.finish??r.start)-r.start)/span*100)+'%';bar.title=r.plate+' เที่ยว '+r.round+' | '+r.gateIn+'–'+(r.gateOut||'ยังไม่ออก');cell.append(bar);
 if(showTravel){
  const addSegment=(start,end,cssClass,description)=>{
   if(!(end>start))return;
@@ -260,11 +262,19 @@ if(showTravel){
   // A thin line connects the previous unloading cycle to the next inbound trip
   // on this vehicle's next-trip lane, avoiding lines crossing other truck rows.
   addSegment(r.depot.start,r.depot.end,'tl-trip-depot','เวลาคงเหลือที่คลัง (ประมาณ ไม่ใช่เวลาจริง)');
-  const bridge=document.createElement('div');bridge.className='tl-trip-bridge';
-  bridge.style.left=(r.depot.start-min)/span*100+'%';
-  bridge.style.width=(r.start-60-r.depot.start)/span*100+'%';
-  bridge.title='เชื่อมช่วงเวลาที่คลังกับเที่ยวถัดไป';
-  cell.append(bridge);
+  const previousRow=displayRowIndex.get(r.depot.previous);
+  const rowGap=i-previousRow;
+  // Connect the previous truck's 60-minute return to the next depot dwell.
+  // Thin, low-contrast vertical joins are opt-in and never appear in normal mode.
+  if(Number.isInteger(previousRow)&&rowGap>0){
+   const connector=document.createElement('div');
+   connector.className='tl-trip-join';
+   connector.style.left=(r.depot.start-min)/span*100+'%';
+   connector.style.top=(11-rowGap*23)+'px';
+   connector.style.height=(rowGap*23)+'px';
+   connector.title='เชื่อมจากเที่ยว '+r.depot.previous.round+' ไปเที่ยว '+r.round+' ของ '+r.plate;
+   cell.append(connector);
+  }
  }
 }
 if(r.unload!==null){const dot=document.createElement('img');dot.className='tl-drop';dot.src=oilDropPng;dot.alt='';dot.setAttribute('aria-label','เวลาเริ่มรับน้ำมันลงถัง');dot.style.left=(r.unload-min)/span*100+'%';dot.title=r.unloadFallback?'Unloading ใช้เวลาเข้าแทน ('+r.gateIn+')':'Unloading '+r.unloading;cell.append(dot)}tr.append(cell);body.append(tr)}
