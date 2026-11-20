@@ -54,13 +54,28 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert.equal(await page.locator('#tlBody tr').count(),36);
   // Optional travel bands and inferred depot dwell do not affect existing PCU numbers.
   assert.equal(await page.locator('.tl-trip-segment').count(),0);
+  const originalOrder=await page.locator('#tlBody tr td:nth-child(3)').allTextContents();
   await page.locator('#tlShowTravel').check();
+  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(แยกกลุ่มตามทะเบียน)');
+  const grouped=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),round:Number(tr.cells[1].textContent)})));
+  const vehicleBlocks=new Set();let lastPlate=null;const groupedTrips=new Map();
+  for(const r of grouped){
+   if(r.plate!==lastPlate){assert(!vehicleBlocks.has(r.plate),'vehicle group must be contiguous: '+r.plate);vehicleBlocks.add(r.plate);lastPlate=r.plate}
+   const tripList=groupedTrips.get(r.plate)||[];tripList.push(r.round);groupedTrips.set(r.plate,tripList);
+  }
+  assert.equal(grouped.length,36);
+  assert.equal(groupedTrips.size,19);
+  assert([...groupedTrips.values()].some(rounds=>rounds.length===3),'fixture must cover 3-trip truck');
+  for(const rounds of groupedTrips.values())assert.deepEqual(rounds,Array.from({length:rounds.length},(_,i)=>i+1));
+  assert.equal(await page.locator('.tl-truck-group-start').count(),groupedTrips.size-1);
   assert.equal(await page.locator('.tl-trip-in').count(),36);
   assert.equal(await page.locator('.tl-trip-out').count(),36);
   assert.equal(await page.locator('.tl-trip-depot').count(),17);
   assert.equal(await page.locator('.tl-trip-join').count(),17);
   assert.equal((await page.locator('#pcuCard .pcu-bar-value').allTextContents())[0],'41.25');
   await page.locator('#tlShowTravel').uncheck();
+  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ตามเวลา Unloading)');
+  assert.deepEqual(await page.locator('#tlBody tr td:nth-child(3)').allTextContents(),originalOrder,'unchecking restores original chronological table');
   assert.equal(await page.locator('.tl-trip-segment').count(),0);
   await page.locator('#tlShowTravel').check();
 
