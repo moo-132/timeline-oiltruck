@@ -60,6 +60,10 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   const originalRowIdentity=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),number:Number(tr.cells[0].textContent)})));
   const originalNumbers=new Map(originalRowIdentity.map(r=>[r.plate+'|'+r.gateIn,r.number]));
   await page.locator('#tlShowTravel').check();
+  assert.equal(await page.locator('#tlAxis span').first().textContent(),'06:00','timeline axis cannot start before 06:00');
+  const inboundBounds=await page.locator('.tl-trip-in').evaluateAll(elements=>elements.map(el=>({left:parseFloat(el.style.left),width:parseFloat(el.style.width)})));
+  assert(inboundBounds.every(item=>item.left>=0&&item.width>=0&&item.left+item.width<=100.01),'pre-06:00 travel spans must be clipped to chart bounds');
+  assert(inboundBounds.some(item=>item.left===0),'travel starting before 06:00 should still show its portion after 06:00');
   assert.equal(await page.locator('#tlOrderLabel').textContent(),'(แยกกลุ่มตามทะเบียน)');
   const grouped=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),order:Number(tr.cells[0].textContent),round:Number(tr.cells[1].textContent)})));
   for(const row of grouped)assert.equal(row.order,originalNumbers.get(row.plate+'|'+row.gateIn),'grouped row must preserve original Unloading sequence number');
