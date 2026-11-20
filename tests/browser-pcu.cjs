@@ -21,7 +21,7 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
    const tx=url.searchParams.get('tqx')||'';
    const callback=/responseHandler:([^;]+)/.exec(tx)?.[1];
    if(!callback)throw Error('Missing JSONP callback');
-   const rows=trips.map((r,i)=>({c:[{v:'2026-11-19'},{v:'TEST-'+i},{v:'สงขลา'},{v:r.gateIn},{v:r.gateOut},{v:1},{v:r.gateIn},{v:42000},{v:i+1},{v:'ยืนยันทะเบียนแล้ว'}]}));
+   const rows=trips.map((r,i)=>({c:[{v:'2026-11-19'},{v:r.plate||'TEST-'+i},{v:r.province||'สงขลา'},{v:r.gateIn},{v:r.gateOut},{v:1},{v:r.gateIn},{v:42000},{v:i+1},{v:'ยืนยันทะเบียนแล้ว'}]}));
    rows.unshift({c:[{v:'2026-11-18'},{v:'TEST-ONLY'},{v:'สงขลา'},{v:'12:00'},{v:'13:00'},{v:1},{v:'12:00'},{v:42000},{v:1},{v:'ยืนยันทะเบียนแล้ว'}]});
    return route.fulfill({status:200,contentType:'application/javascript',body:callback+'('+JSON.stringify({status:'ok',table:{rows}})+');'});
   });
@@ -37,6 +37,33 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   await page.locator('#tlDateSelect').selectOption('2026-11-19');
   assert.equal(await page.locator('#tlBody tr').count(),36);
   assert.equal(await page.locator('img.tl-drop').count(),36);
+  // Calendar must visibly include both weekend columns and allow only dates from WebData.
+  await page.locator('#tlCalendarButton').click();
+  assert.equal(await page.locator('.tl-cal-weekday').count(),7);
+  assert.equal(await page.locator('.tl-cal-weekday.sunday').count(),1);
+  assert.equal(await page.locator('.tl-cal-weekday.saturday').count(),1);
+  assert.equal(await page.locator('.tl-cal-day:not(:disabled)').count(),2);
+  assert.equal(await page.locator('#tlCalendarPanel').isVisible(),true);
+  await page.locator('#tlCalPrev').click();
+  assert.equal(await page.locator('.tl-cal-day:not(:disabled)').count(),0);
+  await page.locator('#tlCalNext').click();
+  await page.locator('.tl-cal-day:not(:disabled)').filter({hasText:/^18$/}).click();
+  assert.equal(await page.locator('#tlBody tr').count(),1);
+  await page.locator('#tlCalendarButton').click();
+  await page.locator('.tl-cal-day:not(:disabled)').filter({hasText:/^19$/}).click();
+  assert.equal(await page.locator('#tlBody tr').count(),36);
+  // Optional travel bands and inferred depot dwell do not affect existing PCU numbers.
+  assert.equal(await page.locator('.tl-trip-segment').count(),0);
+  await page.locator('#tlShowTravel').check();
+  assert.equal(await page.locator('.tl-trip-in').count(),36);
+  assert.equal(await page.locator('.tl-trip-out').count(),36);
+  assert.equal(await page.locator('.tl-trip-depot').count(),17);
+  assert.equal(await page.locator('.tl-trip-join').count(),17);
+  assert.equal((await page.locator('#pcuCard .pcu-bar-value').allTextContents())[0],'41.25');
+  await page.locator('#tlShowTravel').uncheck();
+  assert.equal(await page.locator('.tl-trip-segment').count(),0);
+  await page.locator('#tlShowTravel').check();
+
   await page.screenshot({path:out,fullPage:true});
   await page.addScriptTag({path:require.resolve('html2canvas/dist/html2canvas.min.js')});
   const [download]=await Promise.all([page.waitForEvent('download',{timeout:35000}),page.locator('#tlExportPng').click()]);
@@ -46,6 +73,6 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert(image.height>=1400,'Export height must include timeline and PCU chart');
   const chartVisible=await page.locator('#pcuCard').isVisible();
   assert(chartVisible,'PCU card is visible');
-  console.log('Browser PCU PASS: 12 bars, Thai chart DOM, date switch, 36 oil drops and PNG '+image.width+'x'+image.height);
+  console.log('Browser PCU PASS: calendar weekends, travel/depot bands and joins, 12 bars, date switch, 36 oil drops and PNG '+image.width+'x'+image.height);
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
