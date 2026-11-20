@@ -56,3 +56,6 @@
 @media print{.tl-travel-controls{display:none!important}.tl-calendar-panel{display:none!important}}
 
 .tl-trip-join{position:absolute;width:0;border-left:1.5px dashed #ae8c60;opacity:.40;z-index:2;pointer-events:none;transform:translateX(-.5px)}
+
+/* Soft group divider appears only in optional route view. */
+.tl-table tbody tr.tl-truck-group-start td{border-top:2px solid #d2ddeb}
