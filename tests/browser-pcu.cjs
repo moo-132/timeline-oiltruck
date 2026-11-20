@@ -21,7 +21,7 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
    const tx=url.searchParams.get('tqx')||'';
    const callback=/responseHandler:([^;]+)/.exec(tx)?.[1];
    if(!callback)throw Error('Missing JSONP callback');
-   const rows=trips.map((r,i)=>({c:[{v:'2026-11-19'},{v:r.plate||'TEST-'+i},{v:r.province||'สงขลา'},{v:r.gateIn},{v:r.gateOut},{v:1},{v:r.gateIn},{v:42000},{v:i+1},{v:'ยืนยันทะเบียนแล้ว'}]}));
+   const rows=trips.map((r,i)=>({c:[{v:'2026-11-19'},{v:r.plate||'TEST-'+i},{v:r.province||'สงขลา'},{v:r.gateIn},{v:r.gateOut},{v:i+1},{v:r.gateIn},{v:42000},{v:i+1},{v:'ยืนยันทะเบียนแล้ว'}]}));
    rows.unshift({c:[{v:'2026-11-18'},{v:'TEST-ONLY'},{v:'สงขลา'},{v:'12:00'},{v:'13:00'},{v:1},{v:'12:00'},{v:42000},{v:1},{v:'ยืนยันทะเบียนแล้ว'}]});
    return route.fulfill({status:200,contentType:'application/javascript',body:callback+'('+JSON.stringify({status:'ok',table:{rows}})+');'});
   });
@@ -54,6 +54,8 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert.equal(await page.locator('#tlBody tr').count(),36);
   // Optional travel bands and inferred depot dwell do not affect existing PCU numbers.
   assert.equal(await page.locator('.tl-trip-segment').count(),0);
+  assert.equal(await page.locator('.tl-bar').count(),36);
+  assert.equal(await page.locator('.tl-depot-duration').count(),0);
   const originalOrder=await page.locator('#tlBody tr td:nth-child(3)').allTextContents();
   await page.locator('#tlShowTravel').check();
   assert.equal(await page.locator('#tlOrderLabel').textContent(),'(แยกกลุ่มตามทะเบียน)');
@@ -66,12 +68,28 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert.equal(grouped.length,36);
   assert.equal(groupedTrips.size,19);
   assert([...groupedTrips.values()].some(rounds=>rounds.length===3),'fixture must cover 3-trip truck');
-  for(const rounds of groupedTrips.values())assert.deepEqual(rounds,Array.from({length:rounds.length},(_,i)=>i+1));
+  const originalTripMap=new Map();
+  trips.forEach((trip,index)=>{const key=trip.plate;const list=originalTripMap.get(key)||[];list.push(index+1);originalTripMap.set(key,list)});
+  for(const [plate,rounds] of groupedTrips)assert.deepEqual(rounds,originalTripMap.get(plate),'round column must preserve the original sheet values');
+  assert([...groupedTrips.values()].some(rounds=>rounds[1]>=20),'fixture must contain later sheet rounds shown under a truck\'s second trip');
   assert.equal(await page.locator('.tl-truck-group-start').count(),groupedTrips.size-1);
   assert.equal(await page.locator('.tl-trip-in').count(),36);
   assert.equal(await page.locator('.tl-trip-out').count(),36);
   assert.equal(await page.locator('.tl-trip-depot').count(),17);
-  assert.equal(await page.locator('.tl-trip-join').count(),17);
+  assert.equal(await page.locator('.tl-trip-join').count(),0);
+  assert.equal(await page.locator('.tl-combined-chart').count(),19);
+  assert.equal(await page.locator('.tl-combined-chart .tl-bar').count(),36);
+  assert.equal(await page.locator('.tl-combined-chart .tl-drop').count(),36);
+  assert.equal(await page.locator('.tl-depot-duration').count(),17);
+  assert.equal(await page.locator('.tl-unloading-dark').count(),36);
+  const laneCounts=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),bars:tr.querySelectorAll('.tl-bar').length})));
+  for(const [plate,rounds] of groupedTrips){
+   const lines=laneCounts.filter(r=>r.plate===plate);
+   assert.equal(lines[0].bars,rounds.length,'all the bars for a plate belong to its first row');
+   assert(lines.slice(1).every(r=>r.bars===0),'later trip rows keep only source fields');
+  }
+  const depotLabels=await page.locator('.tl-depot-duration').allTextContents();
+  assert(depotLabels.every(v=>/^\\d+ ชม\\. \\d\\d น\\.$/.test(v)),'depot label must show hours and minutes');
   assert.equal((await page.locator('#pcuCard .pcu-bar-value').allTextContents())[0],'41.25');
   await page.locator('#tlShowTravel').uncheck();
   assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ตามเวลา Unloading)');
