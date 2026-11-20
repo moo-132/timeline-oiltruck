@@ -1,8 +1,26 @@
-<!doctype html><html lang="th"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fuel Oil Operation</title>
+<!doctype html><html lang="th"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fuel Oil Operation</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap">
 <style>*{box-sizing:border-box}body{margin:0;background:#f2f7fc;color:#15344f;font:16px system-ui,sans-serif}header{background:#fff;border-bottom:1px solid #dae7f4;padding:22px 5%;display:flex;justify-content:space-between;align-items:center}h1{font-size:24px;margin:0}small,.muted{color:#607c93}main{max-width:none;width:100%;margin:0;padding:16px 12px}button,.link{border:0;background:#086ecc;color:white;padding:12px 18px;border-radius:9px;cursor:pointer;text-decoration:none;display:inline-block;font:inherit}button.secondary{background:#e5f0fc;color:#1764a6}button:disabled{opacity:.45;cursor:not-allowed}.card{background:white;border:1px solid #dce8f4;border-radius:16px;padding:22px;margin-bottom:22px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.stat strong{display:block;font-size:34px;color:#0878d5;margin-top:8px}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}h2{font-size:20px;margin:0 0 15px}textarea{width:100%;min-height:150px;border:1px solid #b6cfe5;border-radius:8px;padding:12px;font:14px monospace}input{padding:8px;border:1px solid #c6d9ea;border-radius:6px;max-width:170px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:10px;text-align:left;border-bottom:1px solid #e1ebf3;white-space:nowrap}.scroll{overflow:auto}.notice{background:#e6f2ff;border-left:4px solid #1381db;padding:15px;margin-bottom:22px;border-radius:8px}.warn{color:#a34e00}.timeline{min-width:700px}.lane{display:grid;grid-template-columns:170px 1fr;align-items:center;margin:8px 0}.track{position:relative;height:26px;background:repeating-linear-gradient(to right,#edf4fb 0,#edf4fb calc(100%/24 - 1px),#ccdeef calc(100%/24 - 1px),#ccdeef calc(100%/24))}.bar{position:absolute;top:3px;height:20px;border-radius:5px;background:#0d8bdc;min-width:3px}.bar.second{background:#6cbce9}details{line-height:1.8}img{max-height:300px;max-width:100%;object-fit:contain}a{color:#096dbd}@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}header{display:block}main{padding:18px 12px}}</style>
 <main><section id="nativeTimeline" aria-label="กราฟไทม์ไลน์รับน้ำมัน"></section></main>
-<style>#nativeTimeline{margin:8px 0;padding:12px;background:white;border-radius:14px;color:#102f51}.tl-title{display:flex;gap:15px;align-items:center}.tl-title h1{font-size:clamp(22px,2.5vw,40px);font-weight:850}.tl-title p{margin:4px 0 15px}.truck{font-size:48px;padding:0 20px;border-radius:17px;color:white;background:#103459}.tl-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:12px 0}.tl-tools-left,.tl-tools-right{display:flex;align-items:center;gap:8px}.tl-tools-right{margin-left:auto}.tl-date-wrap{display:flex;align-items:center;gap:10px;min-height:44px;min-width:230px;padding:0 12px;border:1px solid #b9d4ed;border-radius:10px;background:#f5faff;color:#135688}.tl-calendar-icon{width:22px;height:22px;flex:none}.tl-date-select{min-width:170px;max-width:none;width:100%;min-height:42px;padding:0 4px;border:0;background:transparent;color:#123a5d;font-size:16px;font-weight:650;cursor:pointer;outline-offset:3px}.tl-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;min-width:38px;padding:0;border:1px solid #c9ddef;border-radius:10px;background:#edf5fe;color:#11518b;cursor:pointer;text-decoration:none;line-height:1}.tl-icon-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.tl-icon-btn:hover{background:#dceeff}.tl-icon-btn:focus-visible,.tl-date-select:focus-visible{outline:2px solid #096dbd;outline-offset:2px}.tl-icon-btn:disabled{opacity:.45;cursor:wait}@media(max-width:480px){.tl-date-wrap{min-width:185px}.tl-date-select{min-width:130px}.tl-tools{gap:6px}.tl-tools-right{gap:5px}}.tl-kpis{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr)) 1.35fr;gap:9px;margin:12px 0 20px}.tl-kpi{padding:12px;border:1px solid #e0e7ef;border-radius:12px;box-shadow:0 1px 5px #12345315;font-size:13px}.tl-kpi strong{display:block;font-size:clamp(15px,1.5vw,25px);margin-top:8px;white-space:nowrap}.tl-kpi:last-child strong{font-size:16px;white-space:normal}.tl-overflow{overflow-x:auto;border:1px solid #d5dfe8;border-radius:12px}.tl-table{table-layout:fixed;min-width:1400px;width:100%;border-collapse:collapse;font-family:Tahoma,system-ui,sans-serif}.tl-table th{background:#103459;color:white;text-align:center;font-size:13px;padding:5px;border-right:1px solid #d6dfeb;white-space:normal}.tl-table th:nth-child(1){width:90px}.tl-table th:nth-child(2){width:55px}.tl-table th:nth-child(3){width:110px}.tl-table th:nth-child(4),.tl-table th:nth-child(5),.tl-table th:nth-child(6){width:90px}.tl-table th:nth-child(7){width:128px}.tl-table th small{color:white;font-size:10px}.tl-table td{height:23px;line-height:22px;padding:0 4px;text-align:center;border-right:1px solid #cbd6e1;border-bottom:0;font-size:13px;font-weight:600;color:#152536}.tl-table tbody tr:nth-child(even){background:#eaf0f6}.tl-table tbody tr:nth-child(odd){background:#fcfdff}.tl-table th.tl-chart-head{padding:3px 0 0;height:48px}#tlAxis{height:25px;position:relative;background:#f5f8fc;color:#132d49;margin-top:4px;overflow:hidden}#tlAxis span{position:absolute;top:3px;transform:translateX(-50%);font-size:12px}#tlAxis span:first-child{transform:none}#tlAxis span:last-child{transform:translateX(-100%)}.tl-table td.tl-chart{position:relative;padding:0;background-image:repeating-linear-gradient(to right,transparent 0,transparent calc(var(--step) - 1px),#b8c6d577 calc(var(--step) - 1px),#b8c6d577 var(--step))}.tl-bar{position:absolute;top:6px;height:12px;border-radius:7px;box-shadow:inset 0 0 3px #ffffff66}.teal{background:#19a5b7}.orange{background:#ffa834}.tl-drop{position:absolute;top:1px;width:16px;height:20px;object-fit:contain;transform:translateX(-50%);filter:drop-shadow(0 1.3px 1.4px #75492488)}.tl-drop-shine{fill:none;stroke:#fff9e8;stroke-width:1.7;opacity:.8}.tl-legend{display:flex;flex-wrap:wrap;gap:25px;padding:18px 5px;font-size:13px;align-items:center}.tl-swatch{width:30px;height:12px;display:inline-block;border-radius:2px;margin-right:9px}.reference-graph{display:none!important}@media(max-width:1000px){.tl-kpis{grid-template-columns:repeat(3,1fr)}}@media print{@page{size:A3 landscape;margin:5mm}header,.notice,.tl-tools,#tlNote{display:none!important}main{display:block!important;max-width:none!important;width:100%!important;margin:0!important;padding:0!important}#nativeTimeline{display:block!important;margin:0;padding:0;background:#fff}.tl-overflow{overflow:visible!important}.tl-table{width:100%!important;min-width:0!important;font-size:11px}.tl-table th{font-size:11px}.tl-table td{font-size:11px}.tl-table thead{display:table-header-group}.tl-table tr{break-inside:avoid;page-break-inside:avoid}.tl-kpis{grid-template-columns:repeat(7,1fr)}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+<style>#nativeTimeline{margin:8px 0;padding:12px;background:white;border-radius:14px;color:#102f51}.tl-title{display:flex;gap:15px;align-items:center}.tl-title h1{font-size:clamp(22px,2.5vw,40px);font-weight:850}.tl-title p{margin:4px 0 15px}.truck{font-size:48px;padding:0 20px;border-radius:17px;color:white;background:#103459}.tl-tools{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:12px 0}.tl-tools-left,.tl-tools-right{display:flex;align-items:center;gap:8px}.tl-tools-right{margin-left:auto}.tl-date-wrap{display:flex;align-items:center;gap:10px;min-height:44px;min-width:230px;padding:0 12px;border:1px solid #b9d4ed;border-radius:10px;background:#f5faff;color:#135688}.tl-calendar-icon{width:22px;height:22px;flex:none}.tl-date-select{min-width:170px;max-width:none;width:100%;min-height:42px;padding:0 4px;border:0;background:transparent;color:#123a5d;font-size:16px;font-weight:650;cursor:pointer;outline-offset:3px}.tl-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;min-width:38px;padding:0;border:1px solid #c9ddef;border-radius:10px;background:#edf5fe;color:#11518b;cursor:pointer;text-decoration:none;line-height:1}.tl-icon-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.tl-icon-btn:hover{background:#dceeff}.tl-icon-btn:focus-visible,.tl-date-select:focus-visible{outline:2px solid #096dbd;outline-offset:2px}.tl-icon-btn:disabled{opacity:.45;cursor:wait}@media(max-width:480px){.tl-date-wrap{min-width:185px}.tl-date-select{min-width:130px}.tl-tools{gap:6px}.tl-tools-right{gap:5px}}.tl-kpis{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr)) 1.35fr;gap:9px;margin:12px 0 20px}.tl-kpi{padding:12px;border:1px solid #e0e7ef;border-radius:12px;box-shadow:0 1px 5px #12345315;font-size:13px}.tl-kpi strong{display:block;font-size:clamp(15px,1.5vw,25px);margin-top:8px;white-space:nowrap}.tl-kpi:last-child strong{font-size:16px;white-space:normal}.tl-overflow{overflow-x:auto;border:1px solid #d5dfe8;border-radius:12px}.tl-table{table-layout:fixed;min-width:1400px;width:100%;border-collapse:collapse;font-family:Tahoma,system-ui,sans-serif}.tl-table th{background:#103459;color:white;text-align:center;font-size:13px;padding:5px;border-right:1px solid #d6dfeb;white-space:normal}.tl-table th:nth-child(1){width:90px}.tl-table th:nth-child(2){width:55px}.tl-table th:nth-child(3){width:110px}.tl-table th:nth-child(4),.tl-table th:nth-child(5),.tl-table th:nth-child(6){width:90px}.tl-table th:nth-child(7){width:128px}.tl-table th small{color:white;font-size:10px}.tl-table td{height:23px;line-height:22px;padding:0 4px;text-align:center;border-right:1px solid #cbd6e1;border-bottom:0;font-size:13px;font-weight:600;color:#152536}.tl-table tbody tr:nth-child(even){background:#eaf0f6}.tl-table tbody tr:nth-child(odd){background:#fcfdff}.tl-table th.tl-chart-head{padding:3px 0 0;height:48px}#tlAxis{height:25px;position:relative;background:#f5f8fc;color:#132d49;margin-top:4px;overflow:hidden}#tlAxis span{position:absolute;top:3px;transform:translateX(-50%);font-size:12px}#tlAxis span:first-child{transform:none}#tlAxis span:last-child{transform:translateX(-100%)}.tl-table td.tl-chart{position:relative;padding:0;background-image:repeating-linear-gradient(to right,transparent 0,transparent calc(var(--step) - 1px),#b8c6d577 calc(var(--step) - 1px),#b8c6d577 var(--step))}.tl-bar{position:absolute;top:6px;height:12px;border-radius:7px;box-shadow:inset 0 0 3px #ffffff66}.teal{background:#19a5b7}.orange{background:#ffa834}.tl-drop{position:absolute;top:1px;width:16px;height:20px;object-fit:contain;transform:translateX(-50%);filter:drop-shadow(0 1.3px 1.4px #75492488)}.tl-drop-shine{fill:none;stroke:#fff9e8;stroke-width:1.7;opacity:.8}.tl-legend{display:flex;flex-wrap:wrap;gap:25px;padding:18px 5px;font-size:13px;align-items:center}.tl-swatch{width:30px;height:12px;display:inline-block;border-radius:2px;margin-right:9px}.reference-graph{display:none!important}@media(max-width:1000px){.tl-kpis{grid-template-columns:repeat(3,1fr)}}@media print{@page{size:A3 landscape;margin:5mm}header,.notice,.tl-tools,#tlNote{display:none!important}#nativeTimeline{margin:0;padding:0}.tl-overflow{overflow:visible}.tl-table{min-width:0}.tl-kpis{grid-template-columns:repeat(7,1fr)}*{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 .teal{background:#08b6d1}.orange{background:#ff9f24}.purple{background:#9574cb}.tl-table th{background:#05245e}.tl-kpi{color:#06245e}.tl-table tbody tr:has(.orange) td:not(.tl-chart){background:#fff0d8}.tl-table tbody tr:has(.teal) td:not(.tl-chart){background:#e4f8fc}.tl-table tbody tr:has(.purple) td:not(.tl-chart){background:#f0eafd}
+
+
+/* Live PCU dashboard, independent of the existing truck Timeline. */
+.pcu-card{margin-top:24px;padding:24px;background:#fff;border:1px solid #dce7f3;border-radius:18px;box-shadow:0 2px 12px #1734530b;color:#123752;font-family:'Sarabun','Noto Sans Thai',Tahoma,system-ui,sans-serif}
+.pcu-card[hidden]{display:none}.pcu-title{font-size:clamp(18px,1.5vw,25px);font-weight:750;margin:0 0 6px;color:#0c335b;line-height:1.5}
+.pcu-subtitle{color:#667f96;font-size:13px;line-height:1.7;margin:0 0 8px}.pcu-summary{font-size:14px;font-weight:650;margin:12px 0 0;color:#275376}
+.pcu-graphic{overflow-x:auto;overflow-y:hidden;width:100%;margin-top:12px;border:1px solid #e7eef6;border-radius:13px;background:#fff}
+.pcu-graphic svg{display:block;min-width:1060px;width:100%;height:auto;font-family:'Sarabun','Noto Sans Thai',Tahoma,system-ui,sans-serif}
+.pcu-bar-normal{fill:#308ee3;stroke:#1c73c5;stroke-width:.6;cursor:help}.pcu-bar-over{fill:#df4d59;stroke:#c52e3e;stroke-width:.6;cursor:help}
+.pcu-bar-value{fill:#1c3e62;font-size:17px;font-weight:750}.pcu-y-label,.pcu-x-label{fill:#53708b;font-size:15px;font-weight:600}
+.pcu-count-line{fill:#3e6384;font-size:13px;font-weight:600}.pcu-total-line{fill:#0f395f;font-size:16px;font-weight:750}.pcu-peak-line{fill:#8195a8;font-size:12px}
+.pcu-limit-label{fill:#c83140;font-size:15px;font-weight:700}.pcu-axis-label{fill:#4b6580;font-size:14px;font-weight:650}
+.pcu-hour-detail{margin:12px 0;padding:11px 14px;background:#f3f8fe;border:1px solid #e3edf8;border-radius:10px;font-size:13px;line-height:1.8;color:#1e486c;min-height:43px}
+.pcu-legend{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin:12px 0 0;color:#506c84;font-size:13px}
+.pcu-key{width:20px;height:10px;border-radius:5px;display:inline-block;margin-right:6px;vertical-align:middle}.pcu-key-normal{background:#308ee3}.pcu-key-high{background:#df4d59}.pcu-key-limit{height:0;border-top:2px dashed #d93642;border-radius:0}
+.pcu-footnote{margin:12px 0 0;font-size:12px;color:#74869a;line-height:1.7}
+@media(max-width:700px){.pcu-card{padding:14px;margin-top:18px}.pcu-graphic svg{min-width:1050px}.pcu-title{font-size:18px}}
+@media print{.pcu-card{break-inside:avoid;page-break-inside:avoid}.pcu-graphic{overflow:visible}.pcu-graphic svg{min-width:0}}
 </style><script>(function(root){
 const normalize=s=>String(s||'').normalize('NFKC').trim().toUpperCase().replace(/[\s‐‑–—-]/g,'');
 const time=s=>/^([01]\d|2[0-3]):[0-5]\d$/.test(s)?Number(s.slice(0,2))*60+Number(s.slice(3)):NaN;
@@ -36,9 +54,113 @@ window.FuelSheet={load(){return new Promise((resolve,reject)=>{
  script.onerror=()=>{cleanup();reject(Error('เชื่อม Google Sheets ไม่สำเร็จ'))};
  script.src='https://docs.google.com/spreadsheets/d/1kaAYhEhTywYQEKrhFIqJDrcs4Zav0BhP97cl_sZ6Als/gviz/tq?gid=1892346793&range=A1%3AJ1000&headers=1&tqx='+encodeURIComponent('out:json;responseHandler:'+callback)+'&tq='+encodeURIComponent('select *')+'&_='+Date.now();document.head.append(script);
 })}};
+</script><script>/* Pure minute-by-minute vehicle occupancy calculation, independent of the DOM and Sheets. */
+(function(root){
+ 'use strict';
+ const FACTOR=2.5,SAFETY=1.1,LIMIT=38,TRAVEL_MINUTES=60;
+ const toMinute=value=>{
+  const text=String(value??'').trim(),match=/^([01]\d|2[0-3]):([0-5]\d)(?::[0-5]\d)?$/.exec(text);
+  return match?Number(match[1])*60+Number(match[2]):null;
+ };
+ const label=minute=>String(Math.floor(minute/60)%24).padStart(2,'0')+':'+String(minute%60).padStart(2,'0');
+ function calculate(rows){
+  if(!Array.isArray(rows))throw Error('ข้อมูลรถต้องเป็น Array');
+  // Intervals are [start,end), so a gate arrival or departure is never double-counted.
+  const trips=rows.map(r=>{
+   const arrival=toMinute(r.gateIn),rawExit=toMinute(r.gateOut);
+   if(arrival===null||rawExit===null)return null;
+   return {arrival,departure:rawExit<arrival?rawExit+1440:rawExit};
+  }).filter(Boolean);
+  const hours=[];
+  for(let hour=6;hour<18;hour++){
+   let best={incoming:0,outgoing:0,total:-1,minute:hour*60};
+   for(let minute=hour*60;minute<(hour+1)*60;minute++){
+    let incoming=0,outgoing=0;
+    for(const t of trips){
+     if(minute>=t.arrival-TRAVEL_MINUTES&&minute<t.arrival)incoming++;
+     if(minute>=t.departure&&minute<t.departure+TRAVEL_MINUTES)outgoing++;
+    }
+    const total=incoming+outgoing;
+    if(total>best.total)best={incoming,outgoing,total,minute};
+   }
+   hours.push({
+    hour,range:label(hour*60)+'–'+label((hour+1)*60),time:label(best.minute),
+    incoming:best.incoming,outgoing:best.outgoing,total:best.total,
+    pcu:best.total*FACTOR,pcuWithSafety:Math.round(best.total*FACTOR*SAFETY*100)/100,
+    exceedsLimit:best.total*FACTOR*SAFETY>LIMIT
+   });
+  }
+  return hours;
+ }
+ root.FuelPCU={calculate,toMinute,FACTOR,SAFETY,LIMIT,TRAVEL_MINUTES};
+ if(typeof module!=='undefined'&&module.exports)module.exports=root.FuelPCU;
+})(typeof globalThis!=='undefined'?globalThis:this);
+</script><script>/* SVG/HTML PCU dashboard; no image snapshots or hardcoded date data. */
+(function(root){
+ 'use strict';
+ const ns='http://www.w3.org/2000/svg';
+ const svgElement=(name,attrs={},text)=>{
+  const node=document.createElementNS(ns,name);
+  Object.entries(attrs).forEach(([k,v])=>node.setAttribute(k,String(v)));
+  if(text!==undefined)node.textContent=String(text);
+  return node;
+ };
+ const fmt=n=>Number(n).toLocaleString('th-TH',{maximumFractionDigits:2});
+ function render(rows){
+  const host=document.getElementById('pcuCard');
+  if(!host||!root.FuelPCU)return;
+  const hours=root.FuelPCU.calculate(rows);
+  const limit=root.FuelPCU.LIMIT;
+  const maxValue=Math.max(limit,...hours.map(x=>x.pcuWithSafety));
+  const yMax=Math.max(45,Math.ceil((maxValue+5)/10)*10);
+  const left=72,top=36,bottom=294,plotHeight=bottom-top,group=104,barWidth=48,width=left+group*12+34;
+  const yOf=v=>bottom-v/yMax*plotHeight;
+  const summary=host.querySelector('.pcu-summary');
+  const chart=host.querySelector('.pcu-graphic');
+  const details=host.querySelector('.pcu-hour-detail');
+  const exceed=hours.filter(x=>x.exceedsLimit);
+  const max=Math.max(...hours.map(x=>x.pcuWithSafety));
+  summary.textContent='สูงสุด '+fmt(max)+' PCU (รวม SF 1.10) · เกินเส้นอ้างอิง '+exceed.length+' ช่วงเวลา · รถ '+rows.length+' เที่ยว';
+  chart.replaceChildren();
+  const svg=svgElement('svg',{viewBox:'0 0 '+width+' 465',role:'img','aria-label':'ปริมาณรถบรรทุกน้ำมันบนถนนสูงสุดรายชั่วโมง และเส้นอ้างอิง 38 PCU'});
+  // Use actual SVG strokes rather than CSS-only backgrounds so PNG export includes the lines.
+  for(let tick=0;tick<=yMax;tick+=10){
+   const y=yOf(tick);
+   svg.append(svgElement('line',{x1:left,y1:y,x2:width-14,y2:y,stroke:'#e6edf5','stroke-width':1}));
+   svg.append(svgElement('text',{x:left-12,y:y+5,'text-anchor':'end',class:'pcu-y-label'},tick));
+  }
+  const thresholdY=yOf(limit);
+  svg.append(svgElement('line',{x1:left,y1:thresholdY,x2:width-14,y2:thresholdY,stroke:'#d93642','stroke-width':2.3,'stroke-dasharray':'9 6',class:'pcu-threshold'}));
+  svg.append(svgElement('text',{x:width-16,y:thresholdY-8,'text-anchor':'end',class:'pcu-limit-label'},'เกณฑ์อ้างอิง 38 PCU'));
+  hours.forEach((item,index)=>{
+   const cx=left+group*index+group/2;
+   const y=yOf(item.pcuWithSafety);
+   const bar=svgElement('rect',{x:cx-barWidth/2,y,width:barWidth,height:Math.max(0,bottom-y),rx:10,class:item.exceedsLimit?'pcu-bar-over':'pcu-bar-normal',tabindex:0});
+   bar.append(svgElement('title',{},item.range+' น. | สูงสุด '+item.time+' น. | ขามา '+item.incoming+' คัน | ขากลับ '+item.outgoing+' คัน | รวม '+item.total+' คัน | PCU '+fmt(item.pcu)+' | รวม SF '+fmt(item.pcuWithSafety)));
+   bar.addEventListener('pointerenter',()=>showDetail(item,details));
+   bar.addEventListener('focus',()=>showDetail(item,details));
+   svg.append(bar);
+   svg.append(svgElement('text',{x:cx,y:Math.max(21,y-9),'text-anchor':'middle',class:'pcu-bar-value'},fmt(item.pcuWithSafety)));
+   svg.append(svgElement('text',{x:cx,y:bottom+28,'text-anchor':'middle',class:'pcu-x-label'},String(item.hour).padStart(2,'0')+':00'));
+   svg.append(svgElement('text',{x:cx,y:bottom+52,'text-anchor':'middle',class:'pcu-count-line'},'มา '+item.incoming+' | กลับ '+item.outgoing));
+   svg.append(svgElement('text',{x:cx,y:bottom+72,'text-anchor':'middle',class:'pcu-total-line'},'รวม '+item.total+' คัน'));
+   svg.append(svgElement('text',{x:cx,y:bottom+91,'text-anchor':'middle',class:'pcu-peak-line'},'สูงสุด '+item.time));
+  });
+  const axis=svgElement('text',{x:18,y:20,class:'pcu-axis-label'},'PCU รวม SF 1.10');
+  svg.append(axis);
+  chart.append(svg);
+  showDetail(hours.reduce((a,b)=>a.pcuWithSafety>=b.pcuWithSafety?a:b),details);
+  host.hidden=false;
+ }
+ function showDetail(item,node){
+  if(!node)return;
+  node.textContent=item.range+' น. · ค่าสูงสุดเวลา '+item.time+' น. · ขามา '+item.incoming+' คัน · ขากลับ '+item.outgoing+' คัน · รวม '+item.total+' คัน · PCU '+fmt(item.pcu)+' · รวม Safety Factor 1.10 = '+fmt(item.pcuWithSafety)+' PCU';
+ }
+ root.renderPcuChart=render;
+})(typeof globalThis!=='undefined'?globalThis:this);
 </script><script>(async()=>{
 const host=document.getElementById('nativeTimeline');
-host.innerHTML=`<div class="tl-title"><span class="truck">▰</span><div><h1>บันทึกการรับน้ำมันดีเซล โรงไฟฟ้าจะนะ</h1><p>โรงไฟฟ้าจะนะ จ.สงขลา ｜ เลือกวันที่จาก Google Sheets ｜ ป้อม 1</p></div></div><div class="tl-tools"><div class="tl-tools-left"><label class="tl-date-wrap" title="เลือกวันที่"><svg class="tl-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 3v4M17 3v4M3 10h18" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><select id="tlDateSelect" class="tl-date-select" aria-label="เลือกวันที่ข้อมูลใน Google Sheets"></select></label></div><div class="tl-tools-right"><button id="tlRefresh" class="tl-icon-btn" title="รีเฟรชจาก Google Sheets" aria-label="รีเฟรชจาก Google Sheets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.8 9a7 7 0 0 1 12.5-2L20 12M4 12l1.7 5A7 7 0 0 0 18.2 15"/></svg></button><button id="tlExportPng" class="tl-icon-btn" title="บันทึกภาพ PNG" aria-label="บันทึกภาพ PNG"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M6 16l4-4 3 3 3-4 3 5"/><circle cx="9" cy="9" r="1.3" fill="currentColor" stroke="none"/></svg></button><button id="tlPrint" class="tl-icon-btn" title="พิมพ์กราฟ" aria-label="พิมพ์กราฟ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M7 14h10v7H7zM17 11h1"/></svg></button><a id="tlOpenSheet" class="tl-icon-btn" href="https://docs.google.com/spreadsheets/d/1kaAYhEhTywYQEKrhFIqJDrcs4Zav0BhP97cl_sZ6Als/edit#gid=2062218599" target="_blank" rel="noopener noreferrer" title="เปิด Google Sheets" aria-label="เปิด Google Sheets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 4h7v7M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"/></svg></a></div></div><p id="tlNote" class="muted">กำลังอ่าน Google Sheets…</p><div id="tlKpis" class="tl-kpis"></div><div class="tl-overflow"><table class="tl-table"><thead><tr><th>ลำดับ<br><small>(ตามเวลา Unloading)</small></th><th>รอบที่</th><th>เลขทะเบียนรถ</th><th>เวลาเข้า</th><th>เวลา Unloading</th><th>เวลาออก</th><th>ปริมาณรับ<br><small>(ลิตร @86°F)</small></th><th class="tl-chart-head">ช่วงเวลาปฏิบัติงาน (เวลาเข้า – ออก ในโรงไฟฟ้า)<div id="tlAxis"></div></th></tr></thead><tbody id="tlBody"></tbody></table></div><div class="tl-legend"><b>สัญลักษณ์</b><span><i class="tl-swatch purple"></i>รถที่วิ่ง 3 รอบในวันเดียว</span><span><i class="tl-swatch teal"></i>รถที่วิ่ง 2 รอบในวันเดียว</span><span><i class="tl-swatch orange"></i>รถที่วิ่ง 1 รอบในวันเดียว</span><span>💧 เวลา Unloading (รับน้ำมันลงถัง)</span><span id="tlReviewLegend" hidden>⚠ ลายมือต้องยืนยัน</span></div>`;
+host.innerHTML=`<div class="tl-title"><span class="truck">▰</span><div><h1>บันทึกการรับน้ำมันดีเซล โรงไฟฟ้าจะนะ</h1><p>โรงไฟฟ้าจะนะ จ.สงขลา ｜ เลือกวันที่จาก Google Sheets ｜ ป้อม 1</p></div></div><div class="tl-tools"><div class="tl-tools-left"><label class="tl-date-wrap" title="เลือกวันที่"><svg class="tl-calendar-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 3v4M17 3v4M3 10h18" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><select id="tlDateSelect" class="tl-date-select" aria-label="เลือกวันที่ข้อมูลใน Google Sheets"></select></label></div><div class="tl-tools-right"><button id="tlRefresh" class="tl-icon-btn" title="รีเฟรชจาก Google Sheets" aria-label="รีเฟรชจาก Google Sheets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.8 9a7 7 0 0 1 12.5-2L20 12M4 12l1.7 5A7 7 0 0 0 18.2 15"/></svg></button><button id="tlExportPng" class="tl-icon-btn" title="บันทึกภาพ PNG" aria-label="บันทึกภาพ PNG"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M6 16l4-4 3 3 3-4 3 5"/><circle cx="9" cy="9" r="1.3" fill="currentColor" stroke="none"/></svg></button><button id="tlPrint" class="tl-icon-btn" title="พิมพ์กราฟ" aria-label="พิมพ์กราฟ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M7 14h10v7H7zM17 11h1"/></svg></button><a id="tlOpenSheet" class="tl-icon-btn" href="https://docs.google.com/spreadsheets/d/1kaAYhEhTywYQEKrhFIqJDrcs4Zav0BhP97cl_sZ6Als/edit#gid=2062218599" target="_blank" rel="noopener noreferrer" title="เปิด Google Sheets" aria-label="เปิด Google Sheets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 4h7v7M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"/></svg></a></div></div><p id="tlNote" class="muted">กำลังอ่าน Google Sheets…</p><div id="tlKpis" class="tl-kpis"></div><div class="tl-overflow"><table class="tl-table"><thead><tr><th>ลำดับ<br><small>(ตามเวลา Unloading)</small></th><th>รอบที่</th><th>เลขทะเบียนรถ</th><th>เวลาเข้า</th><th>เวลา Unloading</th><th>เวลาออก</th><th>ปริมาณรับ<br><small>(ลิตร @86°F)</small></th><th class="tl-chart-head">ช่วงเวลาปฏิบัติงาน (เวลาเข้า – ออก ในโรงไฟฟ้า)<div id="tlAxis"></div></th></tr></thead><tbody id="tlBody"></tbody></table></div><div class="tl-legend"><b>สัญลักษณ์</b><span><i class="tl-swatch purple"></i>รถที่วิ่ง 3 รอบในวันเดียว</span><span><i class="tl-swatch teal"></i>รถที่วิ่ง 2 รอบในวันเดียว</span><span><i class="tl-swatch orange"></i>รถที่วิ่ง 1 รอบในวันเดียว</span><span>💧 เวลา Unloading (รับน้ำมันลงถัง)</span><span id="tlReviewLegend" hidden>⚠ ลายมือต้องยืนยัน</span></div><section id="pcuCard" class="pcu-card" aria-label="กราฟปริมาณรถบรรทุกน้ำมันบนถนนสูงสุดรายชั่วโมง" hidden><h2 class="pcu-title">ปริมาณรถบรรทุกน้ำมันบนถนนสูงสุดรายชั่วโมง (PCU)</h2><p class="pcu-subtitle">คำนวณรถพร้อมกันสูงสุดทุก 1 นาที · เวลาเดินทางขามาและขากลับ 60 นาที · รถบรรทุก 2.5 PCU/คัน · Safety Factor 1.10</p><div class="pcu-summary" aria-live="polite"></div><div class="pcu-graphic"></div><div class="pcu-hour-detail" aria-live="polite"></div><div class="pcu-legend"><span><i class="pcu-key pcu-key-normal"></i>ไม่เกินเกณฑ์</span><span><i class="pcu-key pcu-key-high"></i>มากกว่า 38 PCU</span><span><i class="pcu-key pcu-key-limit"></i>เส้นอ้างอิง 38 PCU</span></div><p class="pcu-footnote">แสดงจำนวนรถพร้อมกันสูงสุดที่แปลงเป็น PCU ไม่ใช่อัตราการไหลของจราจร (PCU/ชั่วโมง) และเส้น 38 PCU เป็นค่าอ้างอิงเพื่อบริหารรถ ไม่ใช่เกณฑ์ตัดสิน EIA โดยตรง</p></section>`;
 const minutes=s=>{if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(s||''))throw Error('เวลาต้องเป็น HH:mm');return +s.slice(0,2)*60 + +s.slice(3)};
 
 // Use a raster oil-drop marker so full-report PNG exports retain every marker.
@@ -72,6 +194,7 @@ const kpis=document.getElementById('tlKpis');kpis.replaceChildren();for(const [i
 const axis=document.getElementById('tlAxis');axis.replaceChildren();for(let t=min;t<=max;t+=60){const tick=document.createElement('span');tick.style.left=(t-min)/span*100+'%';tick.textContent=fmt(t);axis.append(tick)}
 const reviewLegend=document.getElementById('tlReviewLegend');if(reviewLegend)reviewLegend.hidden=!rows.some(r=>r.reviewRequired);
 const body=document.getElementById('tlBody');body.replaceChildren();for(const [i,r]of rows.entries()){const tr=document.createElement('tr');for(const v of [i+1,r.round,r.plate+(r.reviewRequired?' ⚠':''),r.gateIn,r.unloadFallback?r.gateIn:r.unloading,r.gateOut||'—',r.volume>0?r.volume.toLocaleString('th-TH',{maximumFractionDigits:2}):'—']){const td=document.createElement('td');td.textContent=v;if(r.reviewRequired)td.title=r.sourceNote||'ต้องตรวจทาน';tr.append(td)}const cell=document.createElement('td');cell.className='tl-chart';cell.style.setProperty('--step',60/span*100+'%');const bar=document.createElement('div');bar.className='tl-bar '+(counts[r.id]>=3?'purple':counts[r.id]===2?'teal':'orange');bar.style.left=(r.start-min)/span*100+'%';bar.style.width=Math.max(.2,((r.finish??r.start)-r.start)/span*100)+'%';bar.title=r.plate+' เที่ยว '+r.round+' | '+r.gateIn+'–'+(r.gateOut||'ยังไม่ออก');cell.append(bar);if(r.unload!==null){const dot=document.createElement('img');dot.className='tl-drop';dot.src=oilDropPng;dot.alt='';dot.setAttribute('aria-label','เวลาเริ่มรับน้ำมันลงถัง');dot.style.left=(r.unload-min)/span*100+'%';dot.title=r.unloadFallback?'Unloading ใช้เวลาเข้าแทน ('+r.gateIn+')':'Unloading '+r.unloading;cell.append(dot)}tr.append(cell);body.append(tr)}
+try{if(typeof window.renderPcuChart==='function')window.renderPcuChart(data)}catch(pcuError){console.error('PCU chart',pcuError);const card=document.getElementById('pcuCard');if(card){card.hidden=false;card.querySelector('.pcu-summary').textContent='ไม่สามารถคำนวณกราฟ PCU: '+pcuError.message}}
 document.getElementById('tlNote').textContent=note||'ข้อมูลจาก Google Sheets';
 }
 document.getElementById('tlPrint').onclick=()=>window.print();
@@ -101,7 +224,9 @@ exportPngButton.onclick=async()=>{
   const source=document.getElementById('nativeTimeline');
   await Promise.all([...source.querySelectorAll('img.tl-drop')].map(img=>img.decode().catch(()=>{})));
   const table=source.querySelector('.tl-table');
-  const captureWidth=Math.max(source.clientWidth,table?.scrollWidth||0,1500)+28;
+  const pcuSvg=source.querySelector('.pcu-graphic svg');
+  if(document.fonts?.ready)await document.fonts.ready;
+  const captureWidth=Math.max(source.clientWidth,table?.scrollWidth||0,pcuSvg?.getBoundingClientRect().width||0,1500)+28;
   const canvas=await html2canvas(source,{
    backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false,
    width:captureWidth,windowWidth:captureWidth,scrollX:0,scrollY:0,
@@ -115,6 +240,10 @@ exportPngButton.onclick=async()=>{
     if(overflow){overflow.style.overflow='visible';overflow.style.width='100%'}
     const clonedTable=cloned.querySelector('.tl-table');
     if(clonedTable){clonedTable.style.minWidth='0';clonedTable.style.width='100%'}
+    const pcuGraphic=cloned.querySelector('.pcu-graphic');
+    if(pcuGraphic){pcuGraphic.style.overflow='visible';pcuGraphic.style.width='100%'}
+    const pcuSvg=cloned.querySelector('.pcu-graphic svg');
+    if(pcuSvg){pcuSvg.style.minWidth='0';pcuSvg.style.width='100%'}
     // html2canvas may omit CSS repeating-linear-gradient on table cells.
     // Build actual hourly grid elements using the same positions as the X-axis ticks.
     const hourPositions=[...cloned.querySelectorAll('#tlAxis span')].map(tick=>tick.style.left).filter(Boolean);
