@@ -70,7 +70,7 @@
 .tl-combined-chart .tl-trip-in,.tl-combined-chart .tl-trip-out{top:15px;height:8px}
 .tl-combined-chart .tl-trip-depot{top:27px;height:4px}
 .tl-combined-chart .tl-drop{top:9px}
-.tl-unloading-dark{top:6px;height:12px;background:rgba(20,49,94,.53);box-shadow:inset 0 1px 2px #0c254e44;border-radius:5px;z-index:4;pointer-events:auto}
+.tl-unloading-dark{position:absolute;box-sizing:border-box;top:6px;height:12px;background:rgba(20,49,94,.53);box-shadow:inset 0 1px 2px #0c254e44;border-radius:5px;z-index:4;pointer-events:auto}
 .tl-combined-chart .tl-unloading-dark{top:13px;height:12px}
 .tl-depot-duration{position:absolute;top:1px;transform:translateX(-50%);font:700 10px 'Sarabun','Noto Sans Thai',Tahoma,sans-serif;color:#92612d;background:#fff9ebd9;white-space:nowrap;border-radius:3px;padding:0 2px;line-height:12px;z-index:6;pointer-events:auto}
 .tl-combined-chart .tl-depot-duration{top:0}
@@ -290,7 +290,7 @@ for(const [i,r] of rows.entries()){
  const addSegment=(trip,start,end,cssClass,description,extra={})=>{
   if(!(end>start))return null;
   const segment=document.createElement('div');
-  segment.className='tl-trip-segment '+cssClass;
+  segment.className=cssClass==='tl-unloading-dark'?'tl-unloading-dark':'tl-trip-segment '+cssClass;
   segment.style.left=(start-min)/span*100+'%';
   segment.style.width=(end-start)/span*100+'%';
   segment.title=trip.plate+' · '+description+' · '+fmt(start)+'–'+fmt(end);
