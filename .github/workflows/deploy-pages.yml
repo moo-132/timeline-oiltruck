@@ -8,6 +8,7 @@ on:
       - "check.cjs"
       - "test-sheet.cjs"
       - "test-export-grid.cjs"
+      - "test-pcu.cjs"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -34,12 +35,16 @@ jobs:
           node --check dist/logic.js
           node --check dist/sheet-live.js
           node --check dist/timeline.js
+          node --check dist/pcu.js
+          node --check dist/pcu-chart.js
       - name: Verify vehicle rounds
         run: node check.cjs
       - name: Verify Google Sheets feed parsing
         run: node test-sheet.cjs
       - name: Verify hourly grid survives PNG export
         run: node test-export-grid.cjs
+      - name: Verify PCU hourly road traffic against real Sheets data
+        run: node test-pcu.cjs
       - name: Disable Jekyll processing for static files
         run: touch dist/.nojekyll
       - name: Upload GitHub Pages artifact
