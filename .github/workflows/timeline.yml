@@ -9,6 +9,7 @@ on:
       - "check.cjs"
       - "test-sheet.cjs"
       - "test-export-grid.cjs"
+      - "test-pcu.cjs"
       - "build-package.cjs"
       - ".github/workflows/timeline.yml"
   workflow_dispatch:
@@ -29,6 +30,8 @@ jobs:
           node --check dist/logic.js
           node --check dist/sheet-live.js
           node --check dist/timeline.js
+          node --check dist/pcu.js
+          node --check dist/pcu-chart.js
           node --check check.cjs
       - name: Run existing vehicle and trip tests
         run: node check.cjs
@@ -36,6 +39,8 @@ jobs:
         run: node test-sheet.cjs
       - name: Verify hourly grid survives PNG export
         run: node test-export-grid.cjs
+      - name: Verify PCU hourly road traffic against real Sheets data
+        run: node test-pcu.cjs
       - name: Verify effective unload fallback is present in both targets
         run: |
           node - <<'NODE'
