@@ -89,7 +89,7 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
    assert(lines.slice(1).every(r=>r.bars===0),'later trip rows keep only source fields');
   }
   const depotLabels=await page.locator('.tl-depot-duration').allTextContents();
-  assert(depotLabels.every(v=>/^\\d+ ชม\\. \\d\\d น\\.$/.test(v)),'depot label must show hours and minutes');
+  assert(depotLabels.every(v=>/^\d+ ชม\. \d\d น\.$/.test(v)),'depot label must show hours and minutes');
   assert.equal((await page.locator('#pcuCard .pcu-bar-value').allTextContents())[0],'41.25');
   await page.locator('#tlShowTravel').uncheck();
   assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ตามเวลา Unloading)');
