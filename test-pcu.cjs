@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const P=require('./dist/pcu.js');
-const input=[{"gateIn":"06:31","gateOut":"08:20"},{"gateIn":"06:37","gateOut":"08:19"},{"gateIn":"06:37","gateOut":"08:16"},{"gateIn":"06:41","gateOut":"09:53"},{"gateIn":"06:41","gateOut":"09:13"},{"gateIn":"06:45","gateOut":"08:15"},{"gateIn":"06:45","gateOut":"08:15"},{"gateIn":"06:45","gateOut":"09:10"},{"gateIn":"06:47","gateOut":"09:18"},{"gateIn":"06:49","gateOut":"09:20"},{"gateIn":"06:50","gateOut":"10:03"},{"gateIn":"06:51","gateOut":"10:15"},{"gateIn":"06:51","gateOut":"10:52"},{"gateIn":"06:55","gateOut":"10:12"},{"gateIn":"06:56","gateOut":"10:24"},{"gateIn":"08:47","gateOut":"11:08"},{"gateIn":"08:44","gateOut":"11:00"},{"gateIn":"08:56","gateOut":"11:11"},{"gateIn":"11:06","gateOut":"12:11"},{"gateIn":"11:16","gateOut":"12:19"},{"gateIn":"11:36","gateOut":"12:39"},{"gateIn":"11:46","gateOut":"12:53"},{"gateIn":"11:48","gateOut":"13:05"},{"gateIn":"12:00","gateOut":"13:11"},{"gateIn":"12:16","gateOut":"13:24"},{"gateIn":"12:07","gateOut":"13:44"},{"gateIn":"12:50","gateOut":"13:52"},{"gateIn":"13:18","gateOut":"14:23"},{"gateIn":"13:26","gateOut":"14:35"},{"gateIn":"13:57","gateOut":"15:06"},{"gateIn":"14:02","gateOut":"15:12"},{"gateIn":"14:18","gateOut":"15:22"},{"gateIn":"14:30","gateOut":"15:44"},{"gateIn":"14:36","gateOut":"15:41"},{"gateIn":"14:58","gateOut":"16:07"},{"gateIn":"15:22","gateOut":"16:28"}];
+const input=require('./tests/pcu-2026-11-19.json');
 assert.equal(input.length,36,'WebData 19 Nov 2026 must have 36 trips');
 const hours=P.calculate(input);
 assert.equal(hours.length,12);
