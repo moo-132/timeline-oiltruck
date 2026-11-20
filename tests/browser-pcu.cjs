@@ -119,13 +119,33 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
 
   await page.screenshot({path:out,fullPage:true});
   await page.addScriptTag({path:require.resolve('html2canvas/dist/html2canvas.min.js')});
+  await page.evaluate(()=>{
+   const original=window.html2canvas;
+   window.__exportClones=[];
+   window.html2canvas=(source,options)=>original(source,{...options,onclone(doc){
+    options.onclone(doc);
+    window.__exportClones.push({hasPCU:!!doc.getElementById('pcuCard'),rows:doc.querySelectorAll('#tlBody tr').length});
+   }});
+  });
+  assert.equal(await page.locator('#tlExportPng').count(),1);
+  assert.equal(await page.locator('#tlExportTimelinePng').count(),1);
   const [download]=await Promise.all([page.waitForEvent('download',{timeout:35000}),page.locator('#tlExportPng').click()]);
+  assert(download.suggestedFilename().endsWith('-with-PCU.png'));
   await fs.promises.copyFile(await download.path(),pngFile);
   const image=PNG.sync.read(fs.readFileSync(pngFile));
   assert(image.width>=2700,'Export width must include full timeline and PCU chart');
   assert(image.height>=1400,'Export height must include timeline and PCU chart');
+  const [timelineDownload]=await Promise.all([page.waitForEvent('download',{timeout:35000}),page.locator('#tlExportTimelinePng').click()]);
+  assert(timelineDownload.suggestedFilename().endsWith('-Timeline-Only.png'));
+  const timelineFile=path.resolve('tests/timeline-only-export.png');
+  await fs.promises.copyFile(await timelineDownload.path(),timelineFile);
+  const timelineImage=PNG.sync.read(fs.readFileSync(timelineFile));
+  assert(timelineImage.width>=2700,'Timeline-only image must include the full table');
+  assert(timelineImage.height<image.height-150,'Timeline-only PNG must be shorter than the image including PCU');
+  assert.deepEqual(await page.evaluate(()=>window.__exportClones.map(item=>item.hasPCU)),[true,false],'PCU should only be removed in the second export clone');
+  assert.deepEqual(await page.evaluate(()=>window.__exportClones.map(item=>item.rows)),[36,36],'Both PNGs should retain all truck rows');
   const chartVisible=await page.locator('#pcuCard').isVisible();
-  assert(chartVisible,'PCU card is visible');
-  console.log('Browser PCU PASS: calendar weekends, travel/depot bands and joins, 12 bars, date switch, 36 oil drops and PNG '+image.width+'x'+image.height);
+  assert(chartVisible,'PCU remains visible on the live page after both exports');
+  console.log('Browser PCU PASS: calendar weekends, travel/depot bands and joins, 12 bars, date switch, 36 oil drops and both PNG exports '+image.width+'x'+image.height+' vs '+timelineImage.width+'x'+timelineImage.height);
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});
