@@ -15,8 +15,8 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   const context=await browser.newContext({acceptDownloads:true,viewport:{width:1700,height:950}});
   const page=await context.newPage();
   page.on('pageerror',error=>{console.error('Browser page error:',error)});
-  await page.route(/fonts\\.googleapis\\.com/,route=>route.abort());
-  await page.route(/gviz\\/tq/,route=>{
+  await page.route(/fonts\.googleapis\.com/,route=>route.abort());
+  await page.route(/gviz\/tq/,route=>{
    const url=new URL(route.request().url());
    const tx=url.searchParams.get('tqx')||'';
    const callback=/responseHandler:([^;]+)/.exec(tx)?.[1];
