@@ -88,3 +88,9 @@
 .tl-table .tl-unloading-dark.orange{background:#e78e25}
 .tl-table .tl-unloading-dark.purple{background:#8064b6}
 .tl-combined-chart .tl-drop{top:9px}
+
+/* Separate, clearly labeled Timeline-only export next to the full PNG export. */
+.tl-export-timeline-btn{width:auto;min-width:116px;padding:0 10px;gap:6px;background:#e5f4f7;color:#176276;border-color:#bbdee5;font-family:'Sarabun','Noto Sans Thai',Tahoma,sans-serif;font-size:12px;font-weight:700;white-space:nowrap}
+.tl-export-timeline-btn svg{flex:none;width:17px;height:17px}
+.tl-export-timeline-btn:hover{background:#d3ecf2}
+@media(max-width:450px){.tl-export-timeline-btn{min-width:0;padding:0 7px;gap:4px;font-size:11px}}
