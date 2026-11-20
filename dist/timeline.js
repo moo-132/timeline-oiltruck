@@ -26,6 +26,8 @@ if(new Set(rows.map(r=>r.date)).size>1)throw Error('กรุณาเลือ�
 const keys=new Set();for(const r of rows){const key=r.id+'|'+r.start;if(keys.has(key))throw Error('พบทะเบียนและเวลาเข้าซ้ำ');keys.add(key)}
 rows.sort((a,b)=>a.start-b.start);for(const r of rows)r.round=rounds[r.id]=(rounds[r.id]||0)+1;
 rows.sort((a,b)=>(a.unload??a.start)-(b.unload??b.start)||a.start-b.start);
+// Preserve the original Unloading sequence numbers even if rows are grouped by plate.
+rows.forEach((item,index)=>{item.originalOrder=index+1});
 const showTravel=document.getElementById('tlShowTravel').checked;
 // Preserve the original Unloading order when the overlay is off.
 // With travel lines on, group all runs of each vehicle together (1, 2, 3...),
@@ -65,7 +67,7 @@ for(const [i,r] of rows.entries()){
  // Keep the original sheet-wide round identifier: e.g. round 21 remains 21,
  // even if this is the second trip made by a particular vehicle.
  const reportedRound=Number.isInteger(Number(r.trip))&&Number(r.trip)>0?Number(r.trip):r.round;
- for(const v of [i+1,reportedRound,r.plate+(r.reviewRequired?' ⚠':''),r.gateIn,r.unloadFallback?r.gateIn:r.unloading,r.gateOut||'—',r.volume>0?r.volume.toLocaleString('th-TH',{maximumFractionDigits:2}):'—']){
+ for(const v of [r.originalOrder,reportedRound,r.plate+(r.reviewRequired?' ⚠':''),r.gateIn,r.unloadFallback?r.gateIn:r.unloading,r.gateOut||'—',r.volume>0?r.volume.toLocaleString('th-TH',{maximumFractionDigits:2}):'—']){
   const td=document.createElement('td');td.textContent=v;if(r.reviewRequired)td.title=r.sourceNote||'ต้องตรวจทาน';tr.append(td)
  }
  const cell=document.createElement('td');cell.className='tl-chart';cell.style.setProperty('--step',60/span*100+'%');
@@ -76,7 +78,7 @@ for(const [i,r] of rows.entries()){
  const addSegment=(trip,start,end,cssClass,description,extra={})=>{
   if(!(end>start))return null;
   const segment=document.createElement('div');
-  segment.className=cssClass==='tl-unloading-dark'?'tl-unloading-dark':'tl-trip-segment '+cssClass;
+  segment.className=cssClass==='tl-unloading-dark'?'tl-unloading-dark '+(counts[trip.id]>=3?'purple':counts[trip.id]===2?'teal':'orange'):'tl-trip-segment '+cssClass;
   segment.style.left=(start-min)/span*100+'%';
   segment.style.width=(end-start)/span*100+'%';
   segment.title=trip.plate+' · '+description+' · '+fmt(start)+'–'+fmt(end);
