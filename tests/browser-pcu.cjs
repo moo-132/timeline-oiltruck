@@ -57,6 +57,7 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert.equal(await page.locator('.tl-bar').count(),36);
   assert.equal(await page.locator('.tl-depot-duration').count(),0);
   const originalOrder=await page.locator('#tlBody tr td:nth-child(3)').allTextContents();
+  assert.equal(await page.locator('#tlTravelSortControls').isVisible(),false,'travel sorting must be hidden when checkbox is off');
   assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ตามเวลา Gate In → Unloading)');
   const originalRowIdentity=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),unloading:tr.cells[4].textContent.trim(),number:Number(tr.cells[0].textContent)})));
   assert.deepEqual(originalRowIdentity.map(r=>r.gateIn),[...originalRowIdentity.map(r=>r.gateIn)].sort(),'unchecked view must sort all rows by Gate In ascending');
@@ -132,6 +133,47 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   const depotLabels=await page.locator('.tl-depot-duration').allTextContents();
   assert(depotLabels.every(v=>/^\d+ ชม\. \d\d น\.$/.test(v)),'depot label must show hours and minutes');
   assert.equal((await page.locator('#pcuCard .pcu-bar-value').allTextContents())[0],'41.25');
+  // Travel-only sorting controls retain plate groups and their combined bars.
+  assert.equal(await page.locator('#tlTravelSortControls').isVisible(),true);
+  assert.equal(await page.locator('#tlTravelSortKey').inputValue(),'firstIn');
+  assert.equal(await page.locator('#tlTravelSortDirection').inputValue(),'asc');
+  for(const key of ['firstIn','secondIn','secondOut']){
+   await page.locator('#tlTravelSortKey').selectOption(key);
+   for(const direction of ['asc','desc']){
+    await page.locator('#tlTravelSortDirection').selectOption(direction);
+    const groupOrder=await page.locator('#tlBody tr').evaluateAll(trs=>{
+     const groups=[],seen=new Set();
+     for(const tr of trs){
+      const plate=tr.cells[2].textContent.trim();
+      if(groups.length&&groups[groups.length-1].plate===plate){
+       groups[groups.length-1].runs.push(tr);
+      }else{
+       if(seen.has(plate))throw Error('vehicle trip rows became separated: '+plate);
+       seen.add(plate);
+       groups.push({plate,runs:[tr]});
+      }
+     }
+     return groups.map(g=>({
+      plate:g.plate,
+      firstIn:g.runs[0].cells[3].textContent.trim(),
+      secondIn:g.runs[1]?.cells[3].textContent.trim()||null,
+      secondOut:g.runs[1]?.cells[5].textContent.trim()||null,
+      bars:g.runs.map(tr=>tr.querySelectorAll('.tl-bar').length)
+     }));
+    });
+    assert.equal(groupOrder.length,19,'all 19 vehicles must retain separate groups');
+    for(const group of groupOrder){
+     assert(group.bars[0]>=1,'first row must contain the combined vehicle timeline');
+     assert(group.bars.slice(1).every(n=>n===0),'later rows must not duplicate timeline bars');
+    }
+    const values=groupOrder.map(g=>g[key]==='—'?null:g[key]);
+    const available=values.filter(v=>v!==null);
+    assert.deepEqual(available,[...available].sort((a,b)=>direction==='asc'?a.localeCompare(b):b.localeCompare(a)),'sort order for '+key+' '+direction);
+    assert(values.slice(available.length).every(v=>v===null),'missing second trip must always sort last');
+   }
+  }
+  await page.locator('#tlTravelSortKey').selectOption('firstIn');
+  await page.locator('#tlTravelSortDirection').selectOption('asc');
   await page.locator('#tlShowTravel').uncheck();
   assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ตามเวลา Gate In → Unloading)');
   assert.deepEqual(await page.locator('#tlBody tr td:nth-child(3)').allTextContents(),originalOrder,'unchecking restores Gate In chronological table');
