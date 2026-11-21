@@ -64,12 +64,12 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   const inboundBounds=await page.locator('.tl-trip-in').evaluateAll(elements=>elements.map(el=>({left:parseFloat(el.style.left),width:parseFloat(el.style.width)})));
   assert(inboundBounds.every(item=>item.left>=0&&item.width>=0&&item.left+item.width<=100.01),'pre-06:00 travel spans must be clipped to chart bounds');
   assert(inboundBounds.some(item=>item.left===0),'travel starting before 06:00 should still show its portion after 06:00');
-  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(เที่ยว 1 → 2 → 3 ตามเวลา Unloading)');
+  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(เที่ยว 1 → 2 → 3 ตามเวลา Gate In)');
   const grouped=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),order:Number(tr.cells[0].textContent),round:Number(tr.cells[1].textContent)})));
   for(const row of grouped)assert.equal(row.order,originalNumbers.get(row.plate+'|'+row.gateIn),'grouped row must preserve original Unloading sequence number');
   assert.deepEqual(grouped.map(r=>r.order).sort((a,b)=>a-b),Array.from({length:36},(_,i)=>i+1),'original sequence is retained without duplicate or missing numbers');
   // Within each vehicle, the first chronological trip precedes the second,
-  // but across vehicles each trip wave is independently ordered by Unloading.
+  // but across vehicles each trip wave is independently ordered by Gate In.
   const groupedTrips=new Map();
   const tripOrdinalByPlate=new Map();
   const sortable=grouped.map(r=>{
@@ -78,10 +78,10 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
    const tripList=groupedTrips.get(r.plate)||[];tripList.push(r.round);groupedTrips.set(r.plate,tripList);
    return {...r,ordinal};
   });
-  assert.deepEqual(sortable.map(r=>r.ordinal),[...sortable].sort((a,b)=>a.ordinal-b.ordinal||a.order-b.order).map(r=>r.ordinal),'first trips, second trips, third trips must form ordered waves');
+  assert.deepEqual(sortable.map(r=>r.ordinal),[...sortable].sort((a,b)=>a.ordinal-b.ordinal||a.gateIn.localeCompare(b.gateIn)).map(r=>r.ordinal),'first trips, second trips, third trips must form ordered waves');
   for(let ordinal=1;ordinal<=3;ordinal++){
    const wave=sortable.filter(r=>r.ordinal===ordinal);
-   assert.deepEqual(wave.map(r=>r.order),[...wave.map(r=>r.order)].sort((a,b)=>a-b),'each trip wave must follow the original Unloading order');
+   assert.deepEqual(wave.map(r=>r.gateIn),[...wave.map(r=>r.gateIn)].sort(),'each trip wave must follow Gate In order');
   }
   assert.equal(grouped.length,36);
   assert.equal(groupedTrips.size,19);
