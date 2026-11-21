@@ -25,23 +25,20 @@ const counts={},rounds={};let rows=data.map(r=>{const x={...r,plate:String(r.pla
 if(new Set(rows.map(r=>r.date)).size>1)throw Error('กรุณาเลือกข้อมูลครั้งละหนึ่งวัน');
 const keys=new Set();for(const r of rows){const key=r.id+'|'+r.start;if(keys.has(key))throw Error('พบทะเบียนและเวลาเข้าซ้ำ');keys.add(key)}
 rows.sort((a,b)=>a.start-b.start);for(const r of rows)r.round=rounds[r.id]=(rounds[r.id]||0)+1;
-rows.sort((a,b)=>(a.unload??a.start)-(b.unload??b.start)||a.start-b.start);
-// Keep the unselected view in Unloading order. Travel view preserves
-// that source sequence as data, but ranks arrivals by Gate In and groups
-// all rows of the same plate under its earliest arriving trip.
-rows.forEach((item,index)=>{item.unloadingOrder=index+1});
+// Both views rank EVERY trip by Gate In, with Unloading as the tiebreak.
+// Travel mode changes presentation only: rows of the same vehicle stay together.
+rows.sort((a,b)=>a.start-b.start||a.unload-b.unload);
+rows.forEach((item,index)=>{item.originalOrder=index+1});
 const showTravel=document.getElementById('tlShowTravel').checked;
 if(showTravel){
- const byGateIn=[...rows].sort((a,b)=>a.start-b.start||a.unload-b.unload||a.unloadingOrder-b.unloadingOrder);
- byGateIn.forEach((item,index)=>{item.originalOrder=index+1});
  const firstArrival=new Map();
- for(const row of byGateIn)if(!firstArrival.has(row.id))firstArrival.set(row.id,row);
+ for(const row of rows)if(!firstArrival.has(row.id))firstArrival.set(row.id,row);
  rows.sort((a,b)=>{
   const firstA=firstArrival.get(a.id),firstB=firstArrival.get(b.id);
-  return firstA.start-firstB.start||firstA.unload-firstB.unload||firstA.unloadingOrder-firstB.unloadingOrder||a.start-b.start||a.unload-b.unload||a.unloadingOrder-b.unloadingOrder;
+  return firstA.start-firstB.start||firstA.unload-firstB.unload||firstA.originalOrder-firstB.originalOrder||a.start-b.start||a.unload-b.unload||a.originalOrder-b.originalOrder;
  });
-}else rows.forEach(item=>{item.originalOrder=item.unloadingOrder});
-document.getElementById('tlOrderLabel').textContent=showTravel?'(ลำดับ Gate In · จัดกลุ่มตามทะเบียน)':'(ตามเวลา Unloading)';
+}
+document.getElementById('tlOrderLabel').textContent=showTravel?'(ลำดับ Gate In · จัดกลุ่มตามทะเบียน)':'(ตามเวลา Gate In → Unloading)';
 const byTruck=new Map();
 const cyclesByTruck=new Map();
 for(const row of [...rows].sort((a,b)=>a.start-b.start)){const cycles=cyclesByTruck.get(row.id)||[];cycles.push(row);cyclesByTruck.set(row.id,cycles)}
