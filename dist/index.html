@@ -45,6 +45,12 @@
 .tl-travel-toggle{display:inline-flex;gap:9px;align-items:center;font-size:13px;font-weight:750;color:#254d70;cursor:pointer}
 .tl-travel-toggle input{width:17px;height:17px;accent-color:#317bc4;cursor:pointer;margin:0}
 .tl-travel-help{font-size:12px;color:#7c91a4;line-height:1.5}
+
+.tl-travel-sort-controls{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;padding:4px 8px;border-radius:9px;background:#eaf3fc;border:1px solid #cbdff0}
+.tl-travel-sort-controls[hidden]{display:none!important}
+.tl-travel-sort-controls label{display:inline-flex;align-items:center;gap:6px;color:#244f73;font-size:12px;font-weight:700;white-space:nowrap}
+.tl-travel-sort-controls select{max-width:190px;min-height:30px;border:1px solid #bed4e6;border-radius:7px;background:#fff;padding:4px 7px;color:#194969;font:inherit;font-weight:600}
+@media(max-width:700px){.tl-travel-sort-controls{width:100%;gap:7px}.tl-travel-sort-controls label{flex:1 1 140px}.tl-travel-sort-controls select{max-width:100%;flex:1}}
 .tl-travel-legend[hidden]{display:none!important}
 .tl-swatch-in{background:#9bc8ea}.tl-swatch-out{background:#9cabbc}.tl-swatch-depot{background:#d6ae70}
 .tl-table td.tl-chart{isolation:isolate}
