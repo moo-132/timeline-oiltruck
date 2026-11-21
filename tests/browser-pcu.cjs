@@ -57,7 +57,14 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert.equal(await page.locator('.tl-bar').count(),36);
   assert.equal(await page.locator('.tl-depot-duration').count(),0);
   const originalOrder=await page.locator('#tlBody tr td:nth-child(3)').allTextContents();
-  const originalRowIdentity=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),number:Number(tr.cells[0].textContent)})));
+  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ตามเวลา Gate In → Unloading)');
+  const originalRowIdentity=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),unloading:tr.cells[4].textContent.trim(),number:Number(tr.cells[0].textContent)})));
+  assert.deepEqual(originalRowIdentity.map(r=>r.gateIn),[...originalRowIdentity.map(r=>r.gateIn)].sort(),'unchecked view must sort all rows by Gate In ascending');
+  for(let i=1;i<originalRowIdentity.length;i++){
+   const prev=originalRowIdentity[i-1],curr=originalRowIdentity[i];
+   if(prev.gateIn===curr.gateIn)assert(prev.unloading<=curr.unloading,'unchecked view must use Unloading when Gate In is tied');
+  }
+  assert.deepEqual(originalRowIdentity.map(r=>r.number),Array.from({length:36},(_,i)=>i+1),'unchecked view must number rows in Gate In order');
   const gateInRanks=new Map(
     [...originalRowIdentity].sort((a,b)=>a.gateIn.localeCompare(b.gateIn)||a.number-b.number)
       .map((r,i)=>[r.plate+'|'+r.gateIn,i+1])
@@ -126,8 +133,8 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert(depotLabels.every(v=>/^\d+ ชม\. \d\d น\.$/.test(v)),'depot label must show hours and minutes');
   assert.equal((await page.locator('#pcuCard .pcu-bar-value').allTextContents())[0],'41.25');
   await page.locator('#tlShowTravel').uncheck();
-  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ตามเวลา Unloading)');
-  assert.deepEqual(await page.locator('#tlBody tr td:nth-child(3)').allTextContents(),originalOrder,'unchecking restores original chronological table');
+  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ตามเวลา Gate In → Unloading)');
+  assert.deepEqual(await page.locator('#tlBody tr td:nth-child(3)').allTextContents(),originalOrder,'unchecking restores Gate In chronological table');
   assert.equal(await page.locator('.tl-trip-segment').count(),0);
   await page.locator('#tlShowTravel').check();
 
