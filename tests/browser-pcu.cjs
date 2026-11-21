@@ -58,34 +58,34 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert.equal(await page.locator('.tl-depot-duration').count(),0);
   const originalOrder=await page.locator('#tlBody tr td:nth-child(3)').allTextContents();
   const originalRowIdentity=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),number:Number(tr.cells[0].textContent)})));
-  const originalNumbers=new Map(originalRowIdentity.map(r=>[r.plate+'|'+r.gateIn,r.number]));
+  const gateInRanks=new Map(
+    [...originalRowIdentity].sort((a,b)=>a.gateIn.localeCompare(b.gateIn)||a.number-b.number)
+      .map((r,i)=>[r.plate+'|'+r.gateIn,i+1])
+  );
   await page.locator('#tlShowTravel').check();
   assert.equal(await page.locator('#tlAxis span').first().textContent(),'06:00','timeline axis cannot start before 06:00');
   const inboundBounds=await page.locator('.tl-trip-in').evaluateAll(elements=>elements.map(el=>({left:parseFloat(el.style.left),width:parseFloat(el.style.width)})));
   assert(inboundBounds.every(item=>item.left>=0&&item.width>=0&&item.left+item.width<=100.01),'pre-06:00 travel spans must be clipped to chart bounds');
   assert(inboundBounds.some(item=>item.left===0),'travel starting before 06:00 should still show its portion after 06:00');
-  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(Gate In → Unloading)');
+  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ลำดับ Gate In · จัดกลุ่มตามทะเบียน)');
   const grouped=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),order:Number(tr.cells[0].textContent),round:Number(tr.cells[1].textContent)})));
-  for(const row of grouped)assert.equal(row.order,originalNumbers.get(row.plate+'|'+row.gateIn),'grouped row must preserve original Unloading sequence number');
-  assert.deepEqual(grouped.map(r=>r.order).sort((a,b)=>a-b),Array.from({length:36},(_,i)=>i+1),'original sequence is retained without duplicate or missing numbers');
-  // All rows must sort by Gate In globally, independent of trip count.
-  // When Gate In matches, Unloading is the second sorting key.
+  for(const row of grouped)assert.equal(row.order,gateInRanks.get(row.plate+'|'+row.gateIn),'sequence number must use Gate In rank');
+  assert.deepEqual(grouped.map(r=>r.order).sort((a,b)=>a-b),Array.from({length:36},(_,i)=>i+1),'arrival ranks must be unique and complete');
   const groupedTrips=new Map();
-  const sortable=grouped.map(r=>{
-   const tripList=groupedTrips.get(r.plate)||[];
-   tripList.push(r.round);groupedTrips.set(r.plate,tripList);
-   return r;
-  });
-  assert.deepEqual(sortable.map(r=>r.gateIn),[...sortable.map(r=>r.gateIn)].sort(),'all trips must be globally ordered by Gate In');
-  const tiedGateIns=new Map();
+  const groupStarts=[],seenPlates=new Set();
+  let previousPlate=null;
   for(const row of grouped){
-   const values=tiedGateIns.get(row.gateIn)||[];
-   values.push(row.order);tiedGateIns.set(row.gateIn,values);
+   if(row.plate!==previousPlate){
+    assert(!seenPlates.has(row.plate),'all trips for one vehicle must be consecutive');
+    seenPlates.add(row.plate);groupStarts.push(row);
+    previousPlate=row.plate;
+   }
+   const list=groupedTrips.get(row.plate)||[];list.push(row.round);groupedTrips.set(row.plate,list);
   }
-  // The original order is based on Unloading. Within equal Gate In,
-  // those original orders must remain ascending.
-  for(const values of tiedGateIns.values()){
-   assert.deepEqual(values,[...values].sort((a,b)=>a-b),'matching Gate In must be ordered by Unloading');
+  assert.deepEqual(groupStarts.map(r=>r.gateIn),[...groupStarts.map(r=>r.gateIn)].sort(),'vehicle groups should follow first Gate In');
+  for(const plate of seenPlates){
+   const withinGroup=grouped.filter(r=>r.plate===plate);
+   assert.deepEqual(withinGroup.map(r=>r.gateIn),[...withinGroup.map(r=>r.gateIn)].sort(),'each vehicle must list trips in Gate In order');
   }
   assert.equal(grouped.length,36);
   assert.equal(groupedTrips.size,19);
@@ -94,7 +94,7 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   trips.forEach((trip,index)=>{const key=trip.plate;const list=originalTripMap.get(key)||[];list.push(index+1);originalTripMap.set(key,list)});
   for(const [plate,rounds] of groupedTrips)assert.deepEqual(rounds,originalTripMap.get(plate),'round column must preserve the original sheet values');
   assert([...groupedTrips.values()].some(rounds=>rounds[1]>=20),'fixture must contain later sheet rounds shown under a truck\'s second trip');
-  assert.equal(await page.locator('.tl-truck-group-start').count(),0);
+  assert.equal(await page.locator('.tl-truck-group-start').count(),groupedTrips.size-1);
   assert.equal(await page.locator('.tl-trip-in').count(),36);
   assert.equal(await page.locator('.tl-trip-out').count(),36);
   assert.equal(await page.locator('.tl-trip-depot').count(),17);
