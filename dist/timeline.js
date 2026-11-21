@@ -26,18 +26,22 @@ if(new Set(rows.map(r=>r.date)).size>1)throw Error('กรุณาเลือ�
 const keys=new Set();for(const r of rows){const key=r.id+'|'+r.start;if(keys.has(key))throw Error('พบทะเบียนและเวลาเข้าซ้ำ');keys.add(key)}
 rows.sort((a,b)=>a.start-b.start);for(const r of rows)r.round=rounds[r.id]=(rounds[r.id]||0)+1;
 rows.sort((a,b)=>(a.unload??a.start)-(b.unload??b.start)||a.start-b.start);
-// Preserve the original Unloading sequence numbers even if rows are grouped by plate.
-rows.forEach((item,index)=>{item.originalOrder=index+1});
+// Keep the unselected view in Unloading order. Travel view preserves
+// that source sequence as data, but ranks arrivals by Gate In and groups
+// all rows of the same plate under its earliest arriving trip.
+rows.forEach((item,index)=>{item.unloadingOrder=index+1});
 const showTravel=document.getElementById('tlShowTravel').checked;
-// Travel view is strictly chronological across ALL trips: Gate In first,
-// Unloading second only when Gate In is tied. The ordinal trip number does
-// not take priority over actual arrival times.
-// Preserve the original Unloading sequence and draw all trips on the first
-// row of each vehicle, even when later runs appear elsewhere in the table.
 if(showTravel){
- rows.sort((a,b)=>a.start-b.start||a.unload-b.unload||a.originalOrder-b.originalOrder);
-}
-document.getElementById('tlOrderLabel').textContent=showTravel?'(Gate In → Unloading)':'(ตามเวลา Unloading)';
+ const byGateIn=[...rows].sort((a,b)=>a.start-b.start||a.unload-b.unload||a.unloadingOrder-b.unloadingOrder);
+ byGateIn.forEach((item,index)=>{item.originalOrder=index+1});
+ const firstArrival=new Map();
+ for(const row of byGateIn)if(!firstArrival.has(row.id))firstArrival.set(row.id,row);
+ rows.sort((a,b)=>{
+  const firstA=firstArrival.get(a.id),firstB=firstArrival.get(b.id);
+  return firstA.start-firstB.start||firstA.unload-firstB.unload||firstA.unloadingOrder-firstB.unloadingOrder||a.start-b.start||a.unload-b.unload||a.unloadingOrder-b.unloadingOrder;
+ });
+}else rows.forEach(item=>{item.originalOrder=item.unloadingOrder});
+document.getElementById('tlOrderLabel').textContent=showTravel?'(ลำดับ Gate In · จัดกลุ่มตามทะเบียน)':'(ตามเวลา Unloading)';
 const byTruck=new Map();
 const cyclesByTruck=new Map();
 for(const row of [...rows].sort((a,b)=>a.start-b.start)){const cycles=cyclesByTruck.get(row.id)||[];cycles.push(row);cyclesByTruck.set(row.id,cycles)}
@@ -64,7 +68,7 @@ const reviewLegend=document.getElementById('tlReviewLegend');if(reviewLegend)rev
 const body=document.getElementById('tlBody');body.replaceChildren();
 for(const [i,r] of rows.entries()){
  const tr=document.createElement('tr');
- // No vehicle/round separators: chronological rows may interleave trips.
+ if(showTravel&&r.round===1&&i>0)tr.classList.add('tl-truck-group-start');
  // Keep the original sheet-wide round identifier: e.g. round 21 remains 21,
  // even if this is the second trip made by a particular vehicle.
  const reportedRound=Number.isInteger(Number(r.trip))&&Number(r.trip)>0?Number(r.trip):r.round;
