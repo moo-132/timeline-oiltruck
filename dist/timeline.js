@@ -29,13 +29,13 @@ rows.sort((a,b)=>(a.unload??a.start)-(b.unload??b.start)||a.start-b.start);
 // Preserve the original Unloading sequence numbers even if rows are grouped by plate.
 rows.forEach((item,index)=>{item.originalOrder=index+1});
 const showTravel=document.getElementById('tlShowTravel').checked;
-// With travel lines on, show every vehicle's first trip in Unloading order,
-// followed by second trips in their own Unloading order, then third trips.
+// With travel lines on, show every vehicle's first trip in Gate In order,
+// followed by second trips in their own Gate In order, then third trips.
 // Keep the original sequence numbers and draw all trips on each vehicle's first row.
 if(showTravel){
- rows.sort((a,b)=>a.round-b.round||a.unload-b.unload||a.start-b.start||a.originalOrder-b.originalOrder);
+ rows.sort((a,b)=>a.round-b.round||a.start-b.start||a.unload-b.unload||a.originalOrder-b.originalOrder);
 }
-document.getElementById('tlOrderLabel').textContent=showTravel?'(เที่ยว 1 → 2 → 3 ตามเวลา Unloading)':'(ตามเวลา Unloading)';
+document.getElementById('tlOrderLabel').textContent=showTravel?'(เที่ยว 1 → 2 → 3 ตามเวลา Gate In)':'(ตามเวลา Unloading)';
 const byTruck=new Map();
 const cyclesByTruck=new Map();
 for(const row of [...rows].sort((a,b)=>a.start-b.start)){const cycles=cyclesByTruck.get(row.id)||[];cycles.push(row);cyclesByTruck.set(row.id,cycles)}
