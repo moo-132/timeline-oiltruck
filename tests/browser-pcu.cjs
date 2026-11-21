@@ -57,8 +57,8 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   assert.equal(await page.locator('.tl-bar').count(),36);
   assert.equal(await page.locator('.tl-depot-duration').count(),0);
   const originalOrder=await page.locator('#tlBody tr td:nth-child(3)').allTextContents();
-  assert.equal(await page.locator('#tlTravelSortControls').isVisible(),false,'travel sorting must be hidden when checkbox is off');
-  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ตามเวลา Gate In → Unloading)');
+  assert.equal(await page.locator('#tlTravelSortControls').isVisible(),true,'sorting controls must remain visible when checkbox is off');
+  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(เรียงตามเกณฑ์ที่เลือก · แสดงแยกเที่ยว)');
   const originalRowIdentity=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),unloading:tr.cells[4].textContent.trim(),number:Number(tr.cells[0].textContent)})));
   assert.deepEqual(originalRowIdentity.map(r=>r.gateIn),[...originalRowIdentity.map(r=>r.gateIn)].sort(),'unchecked view must sort all rows by Gate In ascending');
   for(let i=1;i<originalRowIdentity.length;i++){
@@ -175,9 +175,31 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   await page.locator('#tlTravelSortKey').selectOption('firstIn');
   await page.locator('#tlTravelSortDirection').selectOption('asc');
   await page.locator('#tlShowTravel').uncheck();
-  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(ตามเวลา Gate In → Unloading)');
+  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(เรียงตามเกณฑ์ที่เลือก · แสดงแยกเที่ยว)');
   assert.deepEqual(await page.locator('#tlBody tr td:nth-child(3)').allTextContents(),originalOrder,'unchecking restores Gate In chronological table');
   assert.equal(await page.locator('.tl-trip-segment').count(),0);
+  // Sorting must also work while travel overlays are disabled.
+  await page.locator('#tlTravelSortKey').selectOption('secondIn');
+  await page.locator('#tlTravelSortDirection').selectOption('desc');
+  assert.equal(await page.locator('#tlTravelSortControls').isVisible(),true);
+  assert.equal(await page.locator('.tl-trip-segment').count(),0);
+  const uncheckedGroups=await page.locator('#tlBody tr').evaluateAll(trs=>{
+    const groups=[];
+    for(const tr of trs){
+      const plate=tr.cells[2].textContent.trim();
+      let last=groups[groups.length-1];
+      if(!last||last.plate!==plate){last={plate,gateIns:[]};groups.push(last)}
+      last.gateIns.push(tr.cells[3].textContent.trim());
+    }
+    return groups;
+  });
+  const secondIns=uncheckedGroups.map(g=>g.gateIns[1]??null);
+  const knownSecondIns=secondIns.filter(Boolean);
+  assert.deepEqual(knownSecondIns,[...knownSecondIns].sort().reverse(),'unchecked mode should sort second-trip Gate In descending');
+  assert(secondIns.slice(knownSecondIns.length).every(v=>v===null),'vehicles missing trip two remain last without overlay');
+  await page.locator('#tlTravelSortKey').selectOption('firstIn');
+  await page.locator('#tlTravelSortDirection').selectOption('asc');
+  assert.deepEqual(await page.locator('#tlBody tr td:nth-child(3)').allTextContents(),originalOrder,'returning to default restores chronological Gate In order');
   await page.locator('#tlShowTravel').check();
 
   await page.screenshot({path:out,fullPage:true});
