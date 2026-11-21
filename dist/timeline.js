@@ -35,6 +35,7 @@ travelSortControls.hidden=false;
 {
  const sortKey=document.getElementById('tlTravelSortKey').value;
  const direction=document.getElementById('tlTravelSortDirection').value==='desc'?-1:1;
+ if(showTravel||sortKey!=='firstIn'||direction<0){
  // All trips remain on the first row for that plate. Sorting changes the
  // ordering of vehicle groups only, never the order of trips within a group.
  const cycles=new Map();
@@ -57,6 +58,7 @@ travelSortControls.hidden=false;
   const order=aa.chosen!==null&&bb.chosen!==null?direction*(aa.chosen-bb.chosen):0;
   return order||aa.first-bb.first||aa.firstUnload-bb.firstUnload||aa.firstOrder-bb.firstOrder||a.start-b.start||a.unload-b.unload||a.originalOrder-b.originalOrder;
  });
+ }
 }
 document.getElementById('tlOrderLabel').textContent=showTravel?'(ลำดับ Gate In · จัดกลุ่มตามทะเบียน)':'(เรียงตามเกณฑ์ที่เลือก · แสดงแยกเที่ยว)';
 const byTruck=new Map();
