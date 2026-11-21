@@ -29,15 +29,13 @@ rows.sort((a,b)=>(a.unload??a.start)-(b.unload??b.start)||a.start-b.start);
 // Preserve the original Unloading sequence numbers even if rows are grouped by plate.
 rows.forEach((item,index)=>{item.originalOrder=index+1});
 const showTravel=document.getElementById('tlShowTravel').checked;
-// Preserve the original Unloading order when the overlay is off.
-// With travel lines on, group all runs of each vehicle together (1, 2, 3...),
-// ordering vehicle groups by the first appearance in the original table.
+// With travel lines on, show every vehicle's first trip in Unloading order,
+// followed by second trips in their own Unloading order, then third trips.
+// Keep the original sequence numbers and draw all trips on each vehicle's first row.
 if(showTravel){
- const firstAppearance=new Map();
- rows.forEach((r,index)=>{if(!firstAppearance.has(r.id))firstAppearance.set(r.id,index)});
- rows.sort((a,b)=>firstAppearance.get(a.id)-firstAppearance.get(b.id)||a.round-b.round);
+ rows.sort((a,b)=>a.round-b.round||a.unload-b.unload||a.start-b.start||a.originalOrder-b.originalOrder);
 }
-document.getElementById('tlOrderLabel').textContent=showTravel?'(แยกกลุ่มตามทะเบียน)':'(ตามเวลา Unloading)';
+document.getElementById('tlOrderLabel').textContent=showTravel?'(เที่ยว 1 → 2 → 3 ตามเวลา Unloading)':'(ตามเวลา Unloading)';
 const byTruck=new Map();
 const cyclesByTruck=new Map();
 for(const row of [...rows].sort((a,b)=>a.start-b.start)){const cycles=cyclesByTruck.get(row.id)||[];cycles.push(row);cyclesByTruck.set(row.id,cycles)}
@@ -64,7 +62,7 @@ const reviewLegend=document.getElementById('tlReviewLegend');if(reviewLegend)rev
 const body=document.getElementById('tlBody');body.replaceChildren();
 for(const [i,r] of rows.entries()){
  const tr=document.createElement('tr');
- if(showTravel&&r.round===1&&i>0)tr.classList.add('tl-truck-group-start');
+ if(showTravel&&i>0&&r.round!==rows[i-1].round)tr.classList.add('tl-truck-group-start');
  // Keep the original sheet-wide round identifier: e.g. round 21 remains 21,
  // even if this is the second trip made by a particular vehicle.
  const reportedRound=Number.isInteger(Number(r.trip))&&Number(r.trip)>0?Number(r.trip):r.round;
