@@ -64,24 +64,28 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   const inboundBounds=await page.locator('.tl-trip-in').evaluateAll(elements=>elements.map(el=>({left:parseFloat(el.style.left),width:parseFloat(el.style.width)})));
   assert(inboundBounds.every(item=>item.left>=0&&item.width>=0&&item.left+item.width<=100.01),'pre-06:00 travel spans must be clipped to chart bounds');
   assert(inboundBounds.some(item=>item.left===0),'travel starting before 06:00 should still show its portion after 06:00');
-  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(เที่ยว 1 → 2 → 3 ตามเวลา Gate In)');
+  assert.equal(await page.locator('#tlOrderLabel').textContent(),'(Gate In → Unloading)');
   const grouped=await page.locator('#tlBody tr').evaluateAll(trs=>trs.map(tr=>({plate:tr.cells[2].textContent.trim(),gateIn:tr.cells[3].textContent.trim(),order:Number(tr.cells[0].textContent),round:Number(tr.cells[1].textContent)})));
   for(const row of grouped)assert.equal(row.order,originalNumbers.get(row.plate+'|'+row.gateIn),'grouped row must preserve original Unloading sequence number');
   assert.deepEqual(grouped.map(r=>r.order).sort((a,b)=>a-b),Array.from({length:36},(_,i)=>i+1),'original sequence is retained without duplicate or missing numbers');
-  // Within each vehicle, the first chronological trip precedes the second,
-  // but across vehicles each trip wave is independently ordered by Gate In.
+  // All rows must sort by Gate In globally, independent of trip count.
+  // When Gate In matches, Unloading is the second sorting key.
   const groupedTrips=new Map();
-  const tripOrdinalByPlate=new Map();
   const sortable=grouped.map(r=>{
-   const ordinal=(tripOrdinalByPlate.get(r.plate)||0)+1;
-   tripOrdinalByPlate.set(r.plate,ordinal);
-   const tripList=groupedTrips.get(r.plate)||[];tripList.push(r.round);groupedTrips.set(r.plate,tripList);
-   return {...r,ordinal};
+   const tripList=groupedTrips.get(r.plate)||[];
+   tripList.push(r.round);groupedTrips.set(r.plate,tripList);
+   return r;
   });
-  assert.deepEqual(sortable.map(r=>r.ordinal),[...sortable].sort((a,b)=>a.ordinal-b.ordinal||a.gateIn.localeCompare(b.gateIn)).map(r=>r.ordinal),'first trips, second trips, third trips must form ordered waves');
-  for(let ordinal=1;ordinal<=3;ordinal++){
-   const wave=sortable.filter(r=>r.ordinal===ordinal);
-   assert.deepEqual(wave.map(r=>r.gateIn),[...wave.map(r=>r.gateIn)].sort(),'each trip wave must follow Gate In order');
+  assert.deepEqual(sortable.map(r=>r.gateIn),[...sortable.map(r=>r.gateIn)].sort(),'all trips must be globally ordered by Gate In');
+  const tiedGateIns=new Map();
+  for(const row of grouped){
+   const values=tiedGateIns.get(row.gateIn)||[];
+   values.push(row.order);tiedGateIns.set(row.gateIn,values);
+  }
+  // The original order is based on Unloading. Within equal Gate In,
+  // those original orders must remain ascending.
+  for(const values of tiedGateIns.values()){
+   assert.deepEqual(values,[...values].sort((a,b)=>a-b),'matching Gate In must be ordered by Unloading');
   }
   assert.equal(grouped.length,36);
   assert.equal(groupedTrips.size,19);
@@ -90,7 +94,7 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   trips.forEach((trip,index)=>{const key=trip.plate;const list=originalTripMap.get(key)||[];list.push(index+1);originalTripMap.set(key,list)});
   for(const [plate,rounds] of groupedTrips)assert.deepEqual(rounds,originalTripMap.get(plate),'round column must preserve the original sheet values');
   assert([...groupedTrips.values()].some(rounds=>rounds[1]>=20),'fixture must contain later sheet rounds shown under a truck\'s second trip');
-  assert.equal(await page.locator('.tl-truck-group-start').count(),2);
+  assert.equal(await page.locator('.tl-truck-group-start').count(),0);
   assert.equal(await page.locator('.tl-trip-in').count(),36);
   assert.equal(await page.locator('.tl-trip-out').count(),36);
   assert.equal(await page.locator('.tl-trip-depot').count(),17);
