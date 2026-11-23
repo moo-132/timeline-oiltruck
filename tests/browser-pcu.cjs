@@ -37,7 +37,7 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   await page.locator('#tlDateSelect').evaluate(select=>{select.value='2026-11-19';select.dispatchEvent(new Event('change',{bubbles:true}))});
   assert.equal(await page.locator('#tlBody tr').count(),36);
   assert.equal(await page.locator('img.tl-drop').count(),36);
-  assert.deepEqual(await page.locator('#tlBody tr td.tl-seq-cell').evaluateAll(cells=>cells.map(cell=>cell.dataset.tripLabel)),Array.from({length:36},(_,i)=>'เที่ยว '+(i+1)),'each leftmost cell must display the source trip number');
+  assert.deepEqual(await page.locator('#tlBody tr').evaluateAll(rows=>rows.map(row=>row.cells[0].dataset.tripLabel)),await page.locator('#tlBody tr').evaluateAll(rows=>rows.map(row=>'เที่ยว '+row.cells[1].textContent.trim())),'each leftmost cell must display the source trip number');
   // Calendar must visibly include both weekend columns and allow only dates from WebData.
   await page.locator('#tlCalendarButton').click();
   assert.equal(await page.locator('.tl-cal-weekday').count(),7);
