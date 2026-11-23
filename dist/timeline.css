@@ -100,3 +100,6 @@
 .tl-export-timeline-btn svg{flex:none;width:17px;height:17px}
 .tl-export-timeline-btn:hover{background:#d3ecf2}
 @media(max-width:450px){.tl-export-timeline-btn{min-width:0;padding:0 7px;gap:4px;font-size:11px}}
+
+/* Show the original sheet trip number beside the original arrival rank in the leftmost column. */
+.tl-table td.tl-seq-cell::after{content:attr(data-trip-label);display:inline-block;margin-left:5px;padding:0 4px;border-radius:5px;background:#dceaf9;color:#245785;font:700 10px 'Sarabun',Tahoma,sans-serif;vertical-align:middle;white-space:nowrap}
