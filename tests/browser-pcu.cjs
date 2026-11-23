@@ -37,6 +37,7 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   await page.locator('#tlDateSelect').evaluate(select=>{select.value='2026-11-19';select.dispatchEvent(new Event('change',{bubbles:true}))});
   assert.equal(await page.locator('#tlBody tr').count(),36);
   assert.equal(await page.locator('img.tl-drop').count(),36);
+  assert.deepEqual(await page.locator('#tlBody tr td.tl-seq-cell').evaluateAll(cells=>cells.map(cell=>cell.dataset.tripLabel)),Array.from({length:36},(_,i)=>'เที่ยว '+(i+1)),'each leftmost cell must display the source trip number');
   // Calendar must visibly include both weekend columns and allow only dates from WebData.
   await page.locator('#tlCalendarButton').click();
   assert.equal(await page.locator('.tl-cal-weekday').count(),7);
@@ -96,6 +97,8 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
    assert.deepEqual(withinGroup.map(r=>r.gateIn),[...withinGroup.map(r=>r.gateIn)].sort(),'each vehicle must list trips in Gate In order');
   }
   assert.equal(grouped.length,36);
+  const leftTripLabels=await page.locator('#tlBody tr td.tl-seq-cell').evaluateAll(cells=>cells.map(cell=>cell.dataset.tripLabel));
+  assert.deepEqual(leftTripLabels,grouped.map(r=>'เที่ยว '+r.round),'leftmost badges must follow each trip after grouping');
   assert.equal(groupedTrips.size,19);
   assert([...groupedTrips.values()].some(rounds=>rounds.length===3),'fixture must cover 3-trip truck');
   const originalTripMap=new Map();
