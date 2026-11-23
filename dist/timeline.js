@@ -91,8 +91,10 @@ for(const [i,r] of rows.entries()){
  // Keep the original sheet-wide round identifier: e.g. round 21 remains 21,
  // even if this is the second trip made by a particular vehicle.
  const reportedRound=Number.isInteger(Number(r.trip))&&Number(r.trip)>0?Number(r.trip):r.round;
- for(const v of [r.originalOrder,reportedRound,r.plate+(r.reviewRequired?' ⚠':''),r.gateIn,r.unloadFallback?r.gateIn:r.unloading,r.gateOut||'—',r.volume>0?r.volume.toLocaleString('th-TH',{maximumFractionDigits:2}):'—']){
-  const td=document.createElement('td');td.textContent=v;if(r.reviewRequired)td.title=r.sourceNote||'ต้องตรวจทาน';tr.append(td)
+ for(const [column,v] of [r.originalOrder,reportedRound,r.plate+(r.reviewRequired?' ⚠':''),r.gateIn,r.unloadFallback?r.gateIn:r.unloading,r.gateOut||'—',r.volume>0?r.volume.toLocaleString('th-TH',{maximumFractionDigits:2}):'—'].entries()){
+  const td=document.createElement('td');td.textContent=v;
+  if(column===0){td.classList.add('tl-seq-cell');td.dataset.tripLabel='เที่ยว '+reportedRound;}
+  if(r.reviewRequired)td.title=r.sourceNote||'ต้องตรวจทาน';tr.append(td)
  }
  const cell=document.createElement('td');cell.className='tl-chart';cell.style.setProperty('--step',60/span*100+'%');
  if(showTravel&&r.round===1)cell.classList.add('tl-combined-chart');
