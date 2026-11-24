@@ -37,7 +37,8 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
   await page.locator('#tlDateSelect').evaluate(select=>{select.value='2026-11-19';select.dispatchEvent(new Event('change',{bubbles:true}))});
   assert.equal(await page.locator('#tlBody tr').count(),36);
   assert.equal(await page.locator('img.tl-drop').count(),36);
-  assert.deepEqual(await page.locator('#tlBody tr').evaluateAll(rows=>rows.map(row=>row.cells[0].dataset.tripLabel)),await page.locator('#tlBody tr').evaluateAll(rows=>rows.map(row=>'เที่ยว '+row.cells[1].textContent.trim())),'each leftmost cell must display the source trip number');
+  assert.equal(await page.locator('#tlBody tr td.tl-seq-cell[data-trip-label]').count(),0,'leftmost trip badges must be removed');
+  assert.deepEqual((await page.locator('.tl-bar-rank').allTextContents()).map(Number).sort((a,b)=>a-b),Array.from({length:36},(_,i)=>i+1),'all original row sequences must appear at timeline bar starts');
   // Calendar must visibly include both weekend columns and allow only dates from WebData.
   await page.locator('#tlCalendarButton').click();
   assert.equal(await page.locator('.tl-cal-weekday').count(),7);
@@ -97,8 +98,8 @@ const out=path.resolve('tests/pcu-browser.png'),pngFile=path.resolve('tests/pcu-
    assert.deepEqual(withinGroup.map(r=>r.gateIn),[...withinGroup.map(r=>r.gateIn)].sort(),'each vehicle must list trips in Gate In order');
   }
   assert.equal(grouped.length,36);
-  const leftTripLabels=await page.locator('#tlBody tr td.tl-seq-cell').evaluateAll(cells=>cells.map(cell=>cell.dataset.tripLabel));
-  assert.deepEqual(leftTripLabels,grouped.map(r=>'เที่ยว '+r.round),'leftmost badges must follow each trip after grouping');
+  assert.equal(await page.locator('#tlBody tr td.tl-seq-cell[data-trip-label]').count(),0,'trip badges must stay removed in grouped view');
+  assert.deepEqual((await page.locator('.tl-bar-rank').allTextContents()).map(Number).sort((a,b)=>a-b),Array.from({length:36},(_,i)=>i+1),'grouped timeline must show the original sequence on every bar');
   assert.equal(groupedTrips.size,19);
   assert([...groupedTrips.values()].some(rounds=>rounds.length===3),'fixture must cover 3-trip truck');
   const originalTripMap=new Map();
