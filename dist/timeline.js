@@ -93,7 +93,7 @@ for(const [i,r] of rows.entries()){
  const reportedRound=Number.isInteger(Number(r.trip))&&Number(r.trip)>0?Number(r.trip):r.round;
  for(const [column,v] of [r.originalOrder,reportedRound,r.plate+(r.reviewRequired?' ⚠':''),r.gateIn,r.unloadFallback?r.gateIn:r.unloading,r.gateOut||'—',r.volume>0?r.volume.toLocaleString('th-TH',{maximumFractionDigits:2}):'—'].entries()){
   const td=document.createElement('td');td.textContent=v;
-  if(column===0){td.classList.add('tl-seq-cell');td.dataset.tripLabel='เที่ยว '+reportedRound;}
+  if(column===0)td.classList.add('tl-seq-cell');
   if(r.reviewRequired)td.title=r.sourceNote||'ต้องตรวจทาน';tr.append(td)
  }
  const cell=document.createElement('td');cell.className='tl-chart';cell.style.setProperty('--step',60/span*100+'%');
@@ -123,6 +123,16 @@ for(const [i,r] of rows.entries()){
   const tripRound=Number.isInteger(Number(trip.trip))&&Number(trip.trip)>0?trip.trip:trip.round;
   bar.title=trip.plate+' รอบ '+tripRound+' | '+trip.gateIn+'–'+(trip.gateOut||'ยังไม่ออก');
   cell.append(bar);
+  // Each visible bar displays its original row sequence, including when all
+  // journeys of the same truck share a single timeline row.
+  if(visibleEnd>min&&trip.start<max){
+   const rank=document.createElement('span');
+   rank.className='tl-bar-rank';
+   rank.style.left=(visibleStart-min)/span*100+'%';
+   rank.textContent=String(trip.originalOrder);
+   rank.title='ลำดับรายการ '+trip.originalOrder+' · '+trip.plate;
+   cell.append(rank);
+  }
   // Highlight the nominal 50-minute unloading window without extending past GateOut.
   if(trip.unload!==null&&trip.finish!==null){
    const darkEnd=Math.min(trip.finish,trip.unload+50);
