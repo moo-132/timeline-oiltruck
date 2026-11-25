@@ -26,6 +26,14 @@ assert.equal(edge[0].incoming,1);assert.equal(edge[11].outgoing,0);
 // Tie: choose earliest minute, not the later equal peak.
 edge=P.calculate([{gateIn:'06:50',gateOut:'09:00'}]);
 assert.equal(edge[0].time,'06:00');
+// Working-day denominator: minimum 12 hours, extend until return to depot and round up.
+edge=P.calculate([{gateIn:'06:30',gateOut:'16:00'}]);
+assert.equal(edge.length,12,'Trips finishing early still use 06:00–18:00');
+edge=P.calculate([{gateIn:'06:30',gateOut:'19:13'}]);
+assert.equal(edge.length,15,'19:13 + 60 min = 20:13, round up to 21:00');
+assert.equal(edge.at(-1).range,'20:00–21:00');
+edge=P.calculate([{gateIn:'06:30',gateOut:'18:00'}]);
+assert.equal(edge.length,13,'18:00 + 60 min = 19:00, exactly 13 hours');
 // The source and its two embedded HTML distributions must include valid JavaScript.
 for(const filename of ['dist/index.html','google-apps-script/Index.html']){
  const source=fs.readFileSync(filename,'utf8');
