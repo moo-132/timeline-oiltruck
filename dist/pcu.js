@@ -16,7 +16,10 @@
    return {arrival,departure:rawExit<arrival?rawExit+1440:rawExit};
   }).filter(Boolean);
   const hours=[];
-  for(let hour=6;hour<18;hour++){
+  // Include all 60-minute return journeys; display through at least 18:00.
+  const lastRoadMinute=Math.max(18*60,...trips.map(t=>t.departure+TRAVEL_MINUTES));
+  const endHour=Math.ceil(lastRoadMinute/60);
+  for(let hour=6;hour<endHour;hour++){
    let best={incoming:0,outgoing:0,total:-1,minute:hour*60};
    for(let minute=hour*60;minute<(hour+1)*60;minute++){
     let incoming=0,outgoing=0;
