@@ -16,7 +16,7 @@
   const limit=root.FuelPCU.LIMIT;
   const maxValue=Math.max(limit,...hours.map(x=>x.pcuWithSafety));
   const yMax=Math.max(45,Math.ceil((maxValue+5)/10)*10);
-  const left=72,top=36,bottom=294,plotHeight=bottom-top,group=104,barWidth=48,width=left+group*12+34;
+  const left=72,top=36,bottom=294,plotHeight=bottom-top,group=104,barWidth=48,width=left+group*hours.length+34;
   const yOf=v=>bottom-v/yMax*plotHeight;
   const summary=host.querySelector('.pcu-summary');
   const chart=host.querySelector('.pcu-graphic');
