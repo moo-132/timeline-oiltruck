@@ -208,7 +208,11 @@ window.FuelSheet={load(){return new Promise((resolve,reject)=>{
   const details=host.querySelector('.pcu-hour-detail');
   const exceed=hours.filter(x=>x.exceedsLimit);
   const max=Math.max(...hours.map(x=>x.pcuWithSafety));
-  summary.textContent='สูงสุด '+fmt(max)+' PCU (รวม SF 1.10) · เกินเส้นอ้างอิง '+exceed.length+' ช่วงเวลา · รถ '+rows.length+' เที่ยว';
+  const workHours=hours.length; // Starts at 06:00; minimum 12 hours, extended until the final tanker reaches the depot, rounded up.
+  const roundTrips=rows.filter(r=>root.FuelPCU.toMinute(r.gateIn)!==null&&root.FuelPCU.toMinute(r.gateOut)!==null).length;
+  const averagePcuPerHour=roundTrips*2*root.FuelPCU.FACTOR*root.FuelPCU.SAFETY/workHours;
+  const workEnd=String(6+workHours).padStart(2,'0')+':00';
+  summary.textContent='ช่วงคำนวณ 06:00–'+workEnd+' น. ('+workHours+' ชม.) · ค่าเฉลี่ย '+fmt(averagePcuPerHour)+' PCU/ชม. (รวม SF 1.10) · รถ '+roundTrips+' เที่ยว · รถบนถนนพร้อมกันสูงสุด '+fmt(max)+' PCU · เกินเส้นอ้างอิง '+exceed.length+' ช่วงเวลา';
   chart.replaceChildren();
   const svg=svgElement('svg',{viewBox:'0 0 '+width+' 465',role:'img','aria-label':'ปริมาณรถบรรทุกน้ำมันบนถนนสูงสุดรายชั่วโมง และเส้นอ้างอิง 38 PCU'});
   // Use actual SVG strokes rather than CSS-only backgrounds so PNG export includes the lines.
