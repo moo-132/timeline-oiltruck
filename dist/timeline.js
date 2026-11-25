@@ -76,7 +76,7 @@ for(const r of [...rows].sort((a,b)=>a.start-b.start)){
 const baseMin=Math.min(...rows.map(r=>r.start)),baseMax=Math.max(...rows.map(r=>r.finish??r.start),...rows.map(r=>r.unload??r.start));
 // Do not extend the chart axis earlier than 06:00, even if the modeled trip begins before that.
 const min=Math.max(6*60,Math.floor((showTravel?baseMin-60:baseMin)/60)*60);
-const max=Math.max(min+60,Math.ceil((showTravel?Math.max(...rows.map(r=>(r.finish??r.start)+60)):baseMax)/60)*60),span=max-min;
+const max=Math.max(18*60,min+60,Math.ceil((showTravel?Math.max(...rows.map(r=>(r.finish??r.start)+60)):baseMax)/60)*60),span=max-min;
 host.querySelectorAll('.tl-travel-legend').forEach(el=>{el.hidden=!showTravel});
 const fmt=n=>String(Math.floor(n/60)%24).padStart(2,'0')+':'+String(n%60).padStart(2,'0')+(n>=1440?' +1 วัน':'');
 const qty=rows.reduce((s,r)=>s+r.volume,0),durations=rows.filter(r=>r.finish!==null).map(r=>r.finish-r.start),avg=durations.length?Math.round(durations.reduce((a,b)=>a+b)/durations.length):null;
